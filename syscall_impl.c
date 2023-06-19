@@ -30,3 +30,17 @@ int	_mc_strncmp(const char *s1, const char *s2, size_t n)
 	}
 	return (0);
 }
+
+void	*_mc_memcpy(void *dest, const void *src, size_t n)
+{
+	char		*d;
+	const char	*s;
+
+	d = dest;
+	s = src;
+	if (!dest && !src)
+		return (NULL);
+	while (n--)
+		*d++ = *s++;
+	return (dest);
+}

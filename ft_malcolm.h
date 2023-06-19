@@ -57,7 +57,8 @@ typedef struct _s_mc_arp_header
 }	_t_mc_arp_header;
 
 /* Global structure */
-typedef struct _mc_s_data {
+typedef struct _mc_s_data
+{
 	bool				verbose;
 	int					raw_sockfd;
 	struct sockaddr_in	src_addr;
@@ -75,5 +76,6 @@ extern _mc_t_data	_mc_g_data;
 size_t	_mc_strlen(const char *s);
 void	_mc_bzero(void *s, size_t n);
 int		_mc_strncmp(const char *s1, const char *s2, size_t n);
+void	*_mc_memcpy(void *dest, const void *src, size_t n);
 
 #endif
