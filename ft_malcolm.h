@@ -11,7 +11,15 @@
 # include <sys/socket.h>
 # include <netinet/if_ether.h>
 
-#define BUFFER_SIZE 65536 /* common value used for capturing packets */
+// Colors
+# define RED_COLOR "\033[31m"
+# define GREEN_COLOR "\033[32m"
+# define YELLOW_COLOR "\033[33m"
+# define RESET_COLOR "\033[0m"
+
+# define IPV4_ADDR_SIZE	4
+
+# define BUFFER_SIZE	65536 /* common value used for capturing packets */
 
 // Define the structure of the ARP packet according to the RFC 826 specification
 typedef struct s_arp_header

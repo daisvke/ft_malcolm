@@ -30,7 +30,7 @@ int	main(int argc, char *argv[])
 {
 	// Check for root privileges
 	if (getuid() == 0) {
-		printf("Root privileges detected.\n");
+		printf(YELLOW_COLOR "Root privileges detected.\n\n" RESET_COLOR);
 	} else {
 		fprintf(stderr, "Not running with root privileges. Quitting...\n");
 		return 1;
@@ -68,23 +68,23 @@ int	main(int argc, char *argv[])
             if (ntohs(arpHeader->ar_op) == ARPOP_REQUEST) {
                 // Extract the sender IP and MAC addresses
                 unsigned char* sender_mac = buffer + sizeof(struct ethhdr) + sizeof(struct arphdr);
-                unsigned char* sender_ip = sender_mac + 6;
+                unsigned char* sender_ip = sender_mac + ETH_ALEN;
 
                 // Extract the target IP and MAC addresses
-                unsigned char* target_mac = sender_ip + 4;
-                unsigned char* target_ip = target_mac + 6;
+                unsigned char* target_mac = sender_ip + IPV4_ADDR_SIZE;
+                unsigned char* target_ip = target_mac + ETH_ALEN;
 
                 // Print the sender and target IP and MAC addresses
-                printf("Sender MAC: ");
+                printf(GREEN_COLOR "Sender MAC: ");
                 print_mac(sender_mac);
                 printf("Sender IP: ");
                 print_ip(sender_ip);
 
-                printf("Target MAC: ");
+                printf(RED_COLOR "Target MAC: ");
                 print_mac(target_mac);
                 printf("Target IP: ");
                 print_ip(target_ip);
-				printf("\n");
+				printf(RESET_COLOR "\n");
             }
 		}
 	}
