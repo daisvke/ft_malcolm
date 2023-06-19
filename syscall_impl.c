@@ -44,3 +44,20 @@ void	*_mc_memcpy(void *dest, const void *src, size_t n)
 		*d++ = *s++;
 	return (dest);
 }
+
+int	_mc_tolower(int c)
+{
+	if (c >= 'A' && c <= 'Z')
+		return (c + 32);
+	return (c);
+}
+
+int	_mc_isdigit(int c)
+{
+	return (c >= '0' && c <= '9');
+}
+
+int	_mc_isxdigit(int c)
+{
+	return (_mc_isdigit(c) || (_mc_tolower(c) >= 'a' && _mc_tolower(c) <= 'f'));
+}
