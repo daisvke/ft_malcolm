@@ -10,6 +10,7 @@
 # include <string.h>
 # include <sys/socket.h>
 # include <netinet/if_ether.h>
+# include <errno.h>
 
 // Colors
 # define RED_COLOR "\033[31m"
@@ -19,7 +20,19 @@
 
 # define IPV4_ADDR_SIZE	4
 
-# define BUFFER_SIZE	65536 /* common value used for capturing packets */
+#define OP_CODE_ARRAY \
+{ \
+	"ARP Request",                   /* 1 */ \
+	"ARP Reply",                     /* 2 */ \
+	"RARP Request (Reverse ARP)",     /* 3 */ \
+	"RARP Reply",                     /* 4 */ \
+	"DRARP Request (Dynamic RARP)",   /* 5 */ \
+	"DRARP Reply",                    /* 6 */ \
+	"DRARP Error",                    /* 7 */ \
+	"InARP Request (Inverse ARP)",    /* 8 */ \
+	"InARP Reply",                    /* 9 */ \
+	"ARP NAK"                         /* 10 */ \
+}
 
 // Define the structure of the ARP packet according to the RFC 826 specification
 typedef struct s_arp_header

@@ -11,7 +11,7 @@ bool	isipv4(unsigned char *ip_addr){
 }
 
 void print_mac(const unsigned char* mac) {
-    printf("%02X:%02X:%02X:%02X:%02X:%02X\n",
+    printf("%02x:%02x:%02x:%02x:%02x:%02x\n",
            mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 }
 
@@ -36,9 +36,20 @@ int	main(int argc, char *argv[])
 		return 1;
 	}
 
-    int				raw_socket;
-    unsigned char	buffer[BUFFER_SIZE];
+    int					raw_socket;
 
+
+	// Will be filled with the source address information
+	struct sockaddr_in	src_addr;
+	// Initial size of the buffer allocated to store src_addr
+    socklen_t			addrlen = sizeof(struct sockaddr_in);
+
+	// Size of the buffer for the packet data
+	size_t				bufflen = (size_t)addrlen + sizeof(struct ethhdr) + sizeof(struct ether_arp) + sizeof(struct arphdr);
+    unsigned char		buffer[bufflen];
+	bzero(buffer, bufflen);
+
+		printf("bufflen:  %zd\n",bufflen);
     // Create raw socket for capturing ARP packets
     raw_socket = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
     if (raw_socket == -1) {
@@ -47,11 +58,14 @@ int	main(int argc, char *argv[])
     }
 
     while (1) {
-
         // Receive packets
-        ssize_t bytes_read = recvfrom(raw_socket, buffer, BUFFER_SIZE, 0, NULL, NULL);
+        ssize_t bytes_read = recvfrom(
+			raw_socket, buffer, bufflen, 0, (struct sockaddr*)&src_addr, &addrlen
+		);
+		printf("byte: %zd\n",bytes_read);
+		
         if (bytes_read == -1) {
-            fprintf(stderr, "Failed to receive packet");
+            fprintf(stderr, "Error: %d\n", errno);
             close(raw_socket);
             return 1;
         }
@@ -61,31 +75,40 @@ int	main(int argc, char *argv[])
 
         // Check if the Ethernet type is ARP
         if (ntohs(ethernetHeader->h_proto) == ETH_P_ARP) {
+			struct ether_arp	*arp_packet = (struct ether_arp *)(buffer + sizeof(struct ethhdr));
+
             // Calculate the offset to the ARP header
-            struct arphdr* arpHeader = (struct arphdr*)(buffer + sizeof(struct ethhdr));
+            struct arphdr* arpHeader = 
+				(struct arphdr*)(buffer + sizeof(struct ethhdr));
 
             // Check if the ARP operation is a request
             if (ntohs(arpHeader->ar_op) == ARPOP_REQUEST) {
+
                 // Extract the sender IP and MAC addresses
-                unsigned char* sender_mac = buffer + sizeof(struct ethhdr) + sizeof(struct arphdr);
-                unsigned char* sender_ip = sender_mac + ETH_ALEN;
+				unsigned char* sender_mac = arp_packet->arp_sha;
+                unsigned char* sender_ip = arp_packet->arp_spa;
 
                 // Extract the target IP and MAC addresses
-                unsigned char* target_mac = sender_ip + IPV4_ADDR_SIZE;
-                unsigned char* target_ip = target_mac + ETH_ALEN;
+                unsigned char* target_mac = arp_packet->arp_tha;
+                unsigned char* target_ip = arp_packet->arp_tpa;
 
                 // Print the sender and target IP and MAC addresses
-                printf(GREEN_COLOR "Sender MAC: ");
+                printf(GREEN_COLOR "Sender MAC:\t");
                 print_mac(sender_mac);
-                printf("Sender IP: ");
+                printf("Sender IP:\t");
                 print_ip(sender_ip);
 
-                printf(RED_COLOR "Target MAC: ");
+                printf(RED_COLOR "Target MAC:\t");
                 print_mac(target_mac);
-                printf("Target IP: ");
+                printf("Target IP:\t");
                 print_ip(target_ip);
 				printf(RESET_COLOR "\n");
             }
+			else {
+const char* op_codes[] = OP_CODE_ARRAY;
+
+				printf(YELLOW_COLOR "Received an %s, not an ARP request...\n\n" RESET_COLOR, op_codes[ntohs(arpHeader->ar_op) - 1]);
+			}
 		}
 	}
 
