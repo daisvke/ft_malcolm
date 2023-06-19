@@ -83,8 +83,8 @@ void	_mc_print_usage(void);
 void	_mc_print_mac(const unsigned char* mac);
 void	_mc_print_ip(const unsigned char* ip);
 
-bool    is_ip_address_ipv4(const char *ip_addr);
-bool 	is_mac_address_valid(const char *mac_address);
+bool    _mc_is_ip_address_ipv4(const char *ip_addr);
+bool 	_mc_is_mac_address_valid(const char *mac_address);
 
 void	_mc_start_sniffing_paquets(void);
 
