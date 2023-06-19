@@ -1,17 +1,13 @@
 #include "ft_malcolm.h"    
 
 
-bool	check_ip(){
-	const char* ipAddress = "192.168.0.1"; // Example IP address
- // TODO check if ipv4
-    uint32_t ipValue = inet_addr(ipAddress);
-    if (ipValue == INADDR_NONE) {
-        printf("Invalid IP address format\n");
-        return 1;
+bool	isipv4(unsigned char *ip_addr){
+    if (inet_addr((const char*)ip_addr) == INADDR_NONE) {
+        fprintf(stderr, "%s Invalid IP address format: Sender IP is not IPv4\n",(const char*)ip_addr);
+        return 0;
     }
-
-    printf("IP value: %u\n", ipValue);
-	return 0;
+    printf("IP value: %s (IPv4)\n", (const char*)ip_addr);
+	return 1;
 }
 
 void print_mac(const unsigned char* mac) {
@@ -72,21 +68,23 @@ int	main(int argc, char *argv[])
             if (ntohs(arpHeader->ar_op) == ARPOP_REQUEST) {
                 // Extract the sender IP and MAC addresses
                 unsigned char* sender_mac = buffer + sizeof(struct ethhdr) + sizeof(struct arphdr);
-                unsigned char* sender_ip = buffer + sizeof(struct ethhdr) + sizeof(struct arphdr) + 6;
+                unsigned char* sender_ip = sender_mac + 6;
 
                 // Extract the target IP and MAC addresses
-                unsigned char* target_mac = sender_mac + 4;
-                unsigned char* target_ip = sender_ip + 10;
+                unsigned char* target_mac = sender_ip + 4;
+                unsigned char* target_ip = target_mac + 6;
 
                 // Print the sender and target IP and MAC addresses
-                printf("Sender IP: ");
-                print_ip(sender_ip);
                 printf("Sender MAC: ");
                 print_mac(sender_mac);
-                printf("Target IP: ");
-                print_ip(target_ip);
+                printf("Sender IP: ");
+                print_ip(sender_ip);
+
                 printf("Target MAC: ");
                 print_mac(target_mac);
+                printf("Target IP: ");
+                print_ip(target_ip);
+				printf("\n");
             }
 		}
 	}
