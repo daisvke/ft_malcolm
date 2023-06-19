@@ -14,16 +14,19 @@
 # include <net/if.h>			// For interface
 # include <ifaddrs.h>			// For getifaddrs()
 
-// Colors
+/*  Colors */
 # define _MC_RED_COLOR		"\033[31m"
 # define _MC_GREEN_COLOR	"\033[32m"
 # define _MC_YELLOW_COLOR	"\033[33m"
 # define _MC_RESET_COLOR	"\033[0m"
 
-// Return
+/* Return */
 # define _MC_ERROR		1
 
-# define _MC_IPV4_ADDR_SIZE	4
+/* Size */
+// Ethernet frames typically have a maximum payload size of 1500B
+# define _MC_MAX_PACKET_SIZE	1500
+# define _MC_IPV4_ADDR_SIZE		4
 
 #define _MC_OP_CODE_ARRAY \
 { \
@@ -40,7 +43,7 @@
 }
 
 // Define the structure of the ARP packet according to the RFC 826 specification
-typedef struct s_arp_header
+typedef struct _s_mc_arp_header
 {
     uint16_t	hardware_type;  // Hardware type (e.g., Ethernet)
     uint16_t	protocol_type;  // Protocol type (e.g., IPv4)
@@ -51,8 +54,26 @@ typedef struct s_arp_header
     uint32_t	sender_ip;      // Sender's IP address
     uint8_t		target_mac[6];  // Target's MAC address
     uint32_t	target_ip;      // Target's IP address
-}	t_arp_header;
+}	_t_mc_arp_header;
 
-size_t	ft_strlen(const char *s);
+/* Global structure */
+typedef struct _mc_s_data {
+	bool				verbose;
+	int					raw_sockfd;
+	struct sockaddr_in	src_addr;
+	struct ethhdr*		ethernet_header;
+	struct ether_arp	*arp_packet;
+	struct arphdr*		arp_header;
+	unsigned char		*sender_mac;
+	unsigned char		*sender_ip;
+	unsigned char		*target_mac;
+	unsigned char		*target_ip;
+}	_mc_t_data;
+
+extern _mc_t_data	_mc_g_data;
+
+size_t	_mc_strlen(const char *s);
+void	_mc_bzero(void *s, size_t n);
+int		_mc_strncmp(const char *s1, const char *s2, size_t n);
 
 #endif
