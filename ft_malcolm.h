@@ -5,33 +5,38 @@
 # include <unistd.h>
 # include <stdint.h>
 # include <stdio.h>
-# include <arpa/inet.h>			// For inet_addr
+# include <arpa/inet.h>			// For inet_addr()
 # include <stdlib.h>
 # include <string.h>
 # include <sys/socket.h>
 # include <netinet/if_ether.h>
 # include <errno.h>
+# include <net/if.h>			// For interface
+# include <ifaddrs.h>			// For getifaddrs()
 
 // Colors
-# define RED_COLOR "\033[31m"
-# define GREEN_COLOR "\033[32m"
-# define YELLOW_COLOR "\033[33m"
-# define RESET_COLOR "\033[0m"
+# define _MC_RED_COLOR		"\033[31m"
+# define _MC_GREEN_COLOR	"\033[32m"
+# define _MC_YELLOW_COLOR	"\033[33m"
+# define _MC_RESET_COLOR	"\033[0m"
 
-# define IPV4_ADDR_SIZE	4
+// Return
+# define _MC_ERROR		1
 
-#define OP_CODE_ARRAY \
+# define _MC_IPV4_ADDR_SIZE	4
+
+#define _MC_OP_CODE_ARRAY \
 { \
-	"ARP Request",                   /* 1 */ \
-	"ARP Reply",                     /* 2 */ \
-	"RARP Request (Reverse ARP)",     /* 3 */ \
-	"RARP Reply",                     /* 4 */ \
-	"DRARP Request (Dynamic RARP)",   /* 5 */ \
-	"DRARP Reply",                    /* 6 */ \
-	"DRARP Error",                    /* 7 */ \
-	"InARP Request (Inverse ARP)",    /* 8 */ \
-	"InARP Reply",                    /* 9 */ \
-	"ARP NAK"                         /* 10 */ \
+	"ARP Request",					/* 1 */ \
+	"ARP Reply",					/* 2 */ \
+	"RARP Request (Reverse ARP)",	/* 3 */ \
+	"RARP Reply",					/* 4 */ \
+	"DRARP Request (Dynamic RARP)",	/* 5 */ \
+	"DRARP Reply",					/* 6 */ \
+	"DRARP Error",					/* 7 */ \
+	"InARP Request (Inverse ARP)",	/* 8 */ \
+	"InARP Reply",					/* 9 */ \
+	"ARP NAK"						/* 10 */ \
 }
 
 // Define the structure of the ARP packet according to the RFC 826 specification
@@ -47,5 +52,7 @@ typedef struct s_arp_header
     uint8_t		target_mac[6];  // Target's MAC address
     uint32_t	target_ip;      // Target's IP address
 }	t_arp_header;
+
+size_t	ft_strlen(const char *s);
 
 #endif

@@ -17,12 +17,10 @@ void _mc_print_ip(const unsigned char* ip) {
     Compare the source IP and MAC addresses of each packet with the desired values.
     Process the packets that match the desired IP and MAC addresses
 */
-
 void	_mc_start_sniffing_paquets(void)
 {
+	// The file descriptor for the raw stream
     int	raw_socket;
-
-
 	// Will be filled with the source address information
 	struct sockaddr_in	src_addr;
 	// Initial size of the buffer allocated to store src_addr
@@ -31,7 +29,7 @@ void	_mc_start_sniffing_paquets(void)
 	// Size of the buffer for the packet data
 	// Ethernet frames typically have a maximum payload size of 1500B
 	size_t	bufflen = 1500;
-	
+	// Buffer used to save all paquets read by recvfrom()
     unsigned char	buffer[bufflen];
 	bzero(buffer, bufflen);
 
@@ -48,7 +46,9 @@ void	_mc_start_sniffing_paquets(void)
 			raw_socket, buffer, bufflen, 0, (struct sockaddr*)&src_addr, &addrlen
 		);
         if (bytes_read == -1) {
-            fprintf(stderr, "Error: %d\n", errno);
+            fprintf(stderr,
+				_MC_RED_COLOR "Error: %s\n" _MC_RESET_COLOR, strerror(errno)
+			);
             close(raw_socket);
             return;
         }
@@ -89,23 +89,23 @@ void	_mc_start_sniffing_paquets(void)
                 unsigned char* target_ip = arp_packet->arp_tpa;
 
                 // Print the sender and target IP and MAC addresses
-                printf(GREEN_COLOR "Sender MAC:\t");
+                printf(_MC_GREEN_COLOR "Sender MAC:\t");
                 _mc_print_mac(sender_mac);
                 printf("Sender IP:\t");
                 _mc_print_ip(sender_ip);
 
-                printf(RED_COLOR "Target MAC:\t");
+                printf(_MC_RED_COLOR "Target MAC:\t");
                 _mc_print_mac(target_mac);
                 printf("Target IP:\t");
                 _mc_print_ip(target_ip);
-				printf(RESET_COLOR "\n");
+				printf(_MC_RESET_COLOR "\n");
             }
 			else {
-				const char* op_codes[] = OP_CODE_ARRAY;
+				const char* op_codes[] = _MC_OP_CODE_ARRAY;
 
 				printf(
-					YELLOW_COLOR "Received an %s, not an ARP request...\n\n"
-					RESET_COLOR,
+					_MC_YELLOW_COLOR "Received an %s, not an ARP request...\n\n"
+					_MC_RESET_COLOR,
 					op_codes[arop_code - 1]
 				);
 			}
@@ -115,15 +115,54 @@ void	_mc_start_sniffing_paquets(void)
     close(raw_socket);
 }
 
+int	_mc_display_interface(void)
+{
+	// Check the network interface
+	struct	ifaddrs *ifaddr, *ifa;
+	char	active_interface[IFNAMSIZ];
+
+    // Retrieve the list of network interfaces
+    if (getifaddrs(&ifaddr) == -1) {
+        fprintf(stderr, _MC_RED_COLOR "ERROR: %s\n", strerror(errno));
+        return 1;
+    }
+
+    // Traverse the list of network interfaces
+    for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+        // Check if the interface has an assigned IP address and is up
+        if (ifa->ifa_addr != NULL && ifa->ifa_addr->sa_family == AF_INET &&
+            (ifa->ifa_flags & IFF_UP) && !(ifa->ifa_flags & IFF_LOOPBACK)) {
+			// TODO replace by custom
+            strncpy(active_interface, ifa->ifa_name, IFNAMSIZ);
+            break;
+        }
+    }
+
+    // Print the active interface name
+    if (ft_strlen(active_interface) > 0) {
+        printf(_MC_YELLOW_COLOR "Active Interface: %s\n", active_interface);
+    } else {
+        fprintf(stderr, _MC_RED_COLOR "No active interface found.\n");
+    }
+	printf(_MC_RESET_COLOR "\n");
+
+    // Free the memory allocated by getifaddrs
+    freeifaddrs(ifaddr);
+
+	return 0;
+}
+
 int	main(int argc, char *argv[])
 {
 	// Check for root privileges
 	if (getuid() == 0) {
-		printf(YELLOW_COLOR "Root privileges detected.\n\n" RESET_COLOR);
+		printf(_MC_YELLOW_COLOR "Root privileges detected.\n\n" _MC_RESET_COLOR);
 	} else {
 		fprintf(stderr, "Not running with root privileges. Quitting...\n");
 		return 1;
 	}
+
+	if (_mc_display_interface() == _MC_ERROR) return 1;
 
 	_mc_start_sniffing_paquets();
 
