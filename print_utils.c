@@ -3,9 +3,12 @@
 void	_mc_print_usage(void)
 {
 	printf(
-		"Usage: [SOURCE IP] [SOURCE MAC] [TARGET IP] [TARGET MAC]\n"
+		"Usage: [HOST IP] [HOST MAC] [TARGET IP] [TARGET MAC]\n\n"
 		"In that particular order.\n"
-		"IP addresses have to be in the IPv4 format\n\n"
+		"HOST = this computer\n"
+		"TARGET = your target sending the ARP request\n\n"
+		"IP addresses have to be in the IPv4 format,\n"
+		"MAP addresses have to be in format xx:xx:xx:xx:xx:xx\n\n"
 		"-v: verbose\n\n"
 	);
 }

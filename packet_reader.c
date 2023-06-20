@@ -8,6 +8,27 @@
     Process the packets that match the desired IP and MAC addresses
 */
 
+int _mc_compare_ip(const unsigned char* ip, const char* ip_string) {
+    // Convert unsigned char* IP address to string representation
+    char ip_buffer[16];  // Assumes IPv4 address
+
+    snprintf(ip_buffer, sizeof(ip_buffer), "%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
+
+    // Compare the IP addresses
+    return _mc_strncmp(ip_buffer, ip_string, 16);
+}
+
+int _mc_compare_mac_addr(const unsigned char* mac, const char* mac_string) {
+	// Convert unsigned char* MAC address to string representation
+	char mac_buffer[18]; // Assumes MAC address format "xx:xx:xx:xx:xx:xx"
+
+	snprintf(mac_buffer, sizeof(mac_buffer), "%02x:%02x:%02x:%02x:%02x:%02x",
+	mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+
+	// Compare the MAC addresses
+	return _mc_strncmp(mac_buffer, mac_string, 18);
+}
+
 void	_mc_start_sniffing_paquets(void)
 {
 	// Initial size of the buffer allocated to store src_addr
@@ -94,6 +115,9 @@ void	_mc_start_sniffing_paquets(void)
 					_mc_print_ip(target_ip);
 					printf(_MC_RESET_COLOR "\n");
 				}
+				if (_mc_compare_ip(sender_ip, _mc_g_data.target_ip) == 0 &&
+					_mc_compare_mac_addr(sender_mac, _mc_g_data.target_mac) == 0)
+					printf("MATCH\n");
             }
 			else if (_mc_g_data.verbose == true)
 			{

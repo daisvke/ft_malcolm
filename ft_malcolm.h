@@ -26,7 +26,6 @@
 /* Size */
 // Ethernet frames typically have a maximum payload size of 1500B
 # define _MC_MAX_PACKET_SIZE	1500
-# define _MC_IPV4_ADDR_SIZE		4
 
 #define _MC_OP_CODE_ARRAY \
 { \
@@ -65,10 +64,10 @@ typedef struct _mc_s_data
 	struct ethhdr*		ethernet_header;
 	struct ether_arp	*arp_packet;
 	struct arphdr*		arp_header;
-	unsigned char		*sender_mac;
-	unsigned char		*sender_ip;
-	unsigned char		*target_mac;
-	unsigned char		*target_ip;
+	char				*host_mac;
+	char				*host_ip;
+	char				*target_mac;
+	char				*target_ip;
 }	_mc_t_data;
 
 extern _mc_t_data	_mc_g_data;

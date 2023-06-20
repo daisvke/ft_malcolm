@@ -82,6 +82,7 @@ int	_mc_validate_and_assign_args(char *argv[])
 	// at argv[1] is when the '-v' option is present at argv[1]
 	size_t	start = _mc_strncmp(argv[1], "-v", _mc_strlen(argv[1])) == 0 ? 2 : 1;
 	int		ip_or_mac = 0;
+
 	printf("\n");
 	for (size_t i=start; i < start + 4; ++i)
 	{
@@ -97,11 +98,12 @@ int	_mc_validate_and_assign_args(char *argv[])
 		++ip_or_mac;
 	}
 	printf("\n");
+
 	// Assign 
-	_mc_g_data.sender_ip = (unsigned char *)argv[start];
-	_mc_g_data.sender_mac = (unsigned char *)argv[start + 1];
-	_mc_g_data.target_ip = (unsigned char *)argv[start + 2];
-	_mc_g_data.target_mac = (unsigned char *)argv[start + 3];
+	_mc_g_data.host_ip = argv[start];
+	_mc_g_data.host_mac = argv[start + 1];
+	_mc_g_data.target_ip = argv[start + 2];
+	_mc_g_data.target_mac = argv[start + 3];
 	return 0;
 }
 

@@ -30,16 +30,16 @@ bool	_mc_is_mac_address_valid(const char *mac_addr) {
 
 	++i;
     // MAC address should be 17 characters long (e.g., "00:11:22:33:44:55")
-    if (strlen(mac_addr) != 17) return _mc_invalid_mac_address(mac_addr);
+    if (_mc_strlen(mac_addr) != 17) return _mc_invalid_mac_address(mac_addr);
 
     // Validate the MAC address format
-    for (int i = 0; i < 17; i++) {
+    for (int i=0; i < 17; i++) {
         char c = mac_addr[i];
 
         // Check if the character is a valid hexadecimal digit or a separator
         if (i % 3 == 2) {
             // Separator should be a colon or a hyphen
-            if (c != ':' && c != '-') return _mc_invalid_mac_address(mac_addr);
+            if (c != ':') return _mc_invalid_mac_address(mac_addr);
         } else {
             // Digit should be a valid hexadecimal character
             if (!_mc_isxdigit(c)) return _mc_invalid_mac_address(mac_addr);
