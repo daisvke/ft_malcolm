@@ -100,7 +100,8 @@ void	_mc_start_sniffing_paquets(void)
                 // Extract the target IP and MAC addresses
                 unsigned char* target_mac = _mc_g_data.arp_packet->arp_tha;
                 unsigned char* target_ip = _mc_g_data.arp_packet->arp_tpa;
-
+				
+				// Only display packet details if in verbose mode
 				if (_mc_g_data.verbose == true)
 				{
 					// Print the sender and target IP and MAC addresses
@@ -115,9 +116,14 @@ void	_mc_start_sniffing_paquets(void)
 					_mc_print_ip(target_ip);
 					printf(_MC_RESET_COLOR "\n");
 				}
+				// When the source data from the packet matches the data
+				// given through command line, we launch the ARP spoofing
 				if (_mc_compare_ip(sender_ip, _mc_g_data.target_ip) == 0 &&
 					_mc_compare_mac_addr(sender_mac, _mc_g_data.target_mac) == 0)
+				{
 					printf("MATCH\n");
+					_mc_run_arp_spoofing();
+				}
             }
 			else if (_mc_g_data.verbose == true)
 			{
