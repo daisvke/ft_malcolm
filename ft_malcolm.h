@@ -41,6 +41,16 @@
 	"ARP NAK"						/* 10 */ \
 }
 
+/* Define the structure of the packet according to the RFC 826 specification
+ We will use this structure to imitate an authentic packet
+ so that the reply to the ARP request will be accepted by the network
+*/
+typedef struct	_mc_s_packet
+{
+	struct ethhdr		ethernet_header; 
+	struct ether_arp	arp_packet;
+}	_mc_t_packet;
+
 // Define the structure of the ARP packet according to the RFC 826 specification
 typedef struct _s_mc_arp_header
 {
@@ -64,8 +74,10 @@ typedef struct _mc_s_data
 	struct ethhdr*		ethernet_header;
 	struct ether_arp	*arp_packet;
 	struct arphdr*		arp_header;
-	char				*host_mac;
-	char				*host_ip;
+	char				*host_mac_str;
+	char				*host_ip_str;
+	char				*host_mac_byte;
+	char				*host_ip_byte;
 	char				*target_mac;
 	char				*target_ip;
 }	_mc_t_data;

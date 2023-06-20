@@ -27,7 +27,14 @@ int	_mc_display_interface(void)
 			!(ifa->ifa_flags & IFF_LOOPBACK) && /* not localhost */
 			!(ifa->ifa_flags & IFF_NOARP)) /* accepts ARP */
 		{
+			// Get the IP address
             _mc_memcpy(active_interface, ifa->ifa_name, IFNAMSIZ);
+			// Get the MAC address
+           struct sockaddr_ll* s = (struct sockaddr_ll*)ifa->ifa_addr;
+            if (s->sll_halen > 0) {
+                memcpy(mac_address, s->sll_addr, ETH_ALEN);
+                break;
+            }
             break;
         }
     }
