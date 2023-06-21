@@ -8,34 +8,31 @@
     Process the packets that match the desired IP and MAC addresses
 */
 
-int _mc_compare_ip(const unsigned char* ip, const char* ip_string) {
-    // Convert unsigned char* IP address to string representation
-    char ip_buffer[16];  // Assumes IPv4 address
+// int _mc_compare_ip(const unsigned char* ip, const char* ip_string) {
+//     // Convert unsigned char* IP address to string representation
+//     char ip_buffer[16];  // Assumes IPv4 address
 
-    snprintf(ip_buffer, sizeof(ip_buffer), "%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
+//     snprintf(ip_buffer, sizeof(ip_buffer), "%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
 
-    // Compare the IP addresses
-    return _mc_strncmp(ip_buffer, ip_string, 16);
-}
+//     // Compare the IP addresses
+//     return _mc_strncmp(ip_buffer, ip_string, 16);
+// }
 
-int _mc_compare_mac_addr(const unsigned char* mac, const char* mac_string) {
-	// Convert unsigned char* MAC address to string representation
-	char mac_buffer[18]; // Assumes MAC address format "xx:xx:xx:xx:xx:xx"
+// int _mc_compare_mac_addr(const unsigned char* mac, const char* mac_string) {
+// 	// Convert unsigned char* MAC address to string representation
+// 	char mac_buffer[18]; // Assumes MAC address format "xx:xx:xx:xx:xx:xx"
 
-	snprintf(mac_buffer, sizeof(mac_buffer), "%02x:%02x:%02x:%02x:%02x:%02x",
-	mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+// 	snprintf(mac_buffer, sizeof(mac_buffer), "%02x:%02x:%02x:%02x:%02x:%02x",
+// 	mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 
-	// Compare the MAC addresses
-	return _mc_strncmp(mac_buffer, mac_string, 18);
-}
+// 	// Compare the MAC addresses
+// 	return _mc_strncmp(mac_buffer, mac_string, 18);
+// }
 
 void	_mc_start_sniffing_paquets(void)
 {
 	// Initial size of the buffer allocated to store src_addr
     socklen_t	addrlen = sizeof(struct sockaddr_in);
-
-	// Buffer used to save all paquets read by recvfrom()
-    unsigned char	buffer[_MC_MAX_PACKET_SIZE];
 
     // Create raw socket for capturing ARP packets,
 	// and save the file descriptor
@@ -48,7 +45,8 @@ void	_mc_start_sniffing_paquets(void)
 
     while (1)
 	{
-		_mc_bzero(buffer, _MC_MAX_PACKET_SIZE);
+		// Buffer used to save all paquets read by recvfrom()
+   		 unsigned char	buffer[_MC_MAX_PACKET_SIZE] = {0};
 
         /* Read packets from the raw socket with RECVFROM */
         ssize_t bytes_read = recvfrom(
@@ -64,7 +62,7 @@ void	_mc_start_sniffing_paquets(void)
             close(_mc_g_data.raw_sockfd);
             return;
         }
-        // From here, parse the received packet
+        /* From here, parse the received packet */
 
 		// The buffer contains the whole packet,
 		// and the firt header in the packet is the ethernet header
@@ -118,8 +116,8 @@ void	_mc_start_sniffing_paquets(void)
 				}
 				// When the source data from the packet matches the data
 				// given through command line, we launch the ARP spoofing
-				if (_mc_compare_ip(sender_ip, _mc_g_data.target_ip) == 0 &&
-					_mc_compare_mac_addr(sender_mac, _mc_g_data.target_mac) == 0)
+				if (_mc_memcmp(sender_ip, _mc_g_data.target_ip, _MC_IPV4_BYTE_SIZE) == 0 &&
+					_mc_memcmp(sender_mac, _mc_g_data.target_mac, ETH_ALEN) == 0)
 				{
 					printf("MATCH\n");
 					_mc_run_arp_spoofing();

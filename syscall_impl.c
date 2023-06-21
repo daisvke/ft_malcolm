@@ -31,6 +31,23 @@ int	_mc_strncmp(const char *s1, const char *s2, size_t n)
 	return (0);
 }
 
+int	_mc_memcmp(const void *p1, const void *p2, size_t n)
+{
+	unsigned char	*s1;
+	unsigned char	*s2;
+
+	s1 = (unsigned char *)p1;
+	s2 = (unsigned char *)p2;
+	while (n--)
+	{
+		if (*s1 != *s2)
+			return ((unsigned char)(*s1) - (unsigned char)(*s2));
+		s1++;
+		s2++;
+	}
+	return (0);
+}
+
 void	*_mc_memcpy(void *dest, const void *src, size_t n)
 {
 	char		*d;

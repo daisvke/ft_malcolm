@@ -13,6 +13,7 @@
 # include <errno.h>
 # include <net/if.h>			// For interface
 # include <ifaddrs.h>			// For getifaddrs()
+# include <net/ethernet.h>
 
 /*  Colors */
 # define _MC_RED_COLOR		"\033[31m"
@@ -26,8 +27,9 @@
 /* Size */
 // Ethernet frames typically have a maximum payload size of 1500B
 # define _MC_MAX_PACKET_SIZE	1500
+# define _MC_IPV4_BYTE_SIZE		4
 
-#define _MC_OP_CODE_ARRAY \
+# define _MC_OP_CODE_ARRAY \
 { \
 	"ARP Request",					/* 1 */ \
 	"ARP Reply",					/* 2 */ \
@@ -40,16 +42,6 @@
 	"InARP Reply",					/* 9 */ \
 	"ARP NAK"						/* 10 */ \
 }
-
-/* Define the structure of the packet according to the RFC 826 specification
- We will use this structure to imitate an authentic packet
- so that the reply to the ARP request will be accepted by the network
-*/
-typedef struct	_mc_s_packet
-{
-	struct ethhdr		ethernet_header; 
-	struct ether_arp	arp_packet;
-}	_mc_t_packet;
 
 // Define the structure of the ARP packet according to the RFC 826 specification
 typedef struct _s_mc_arp_header
@@ -71,15 +63,13 @@ typedef struct _mc_s_data
 	bool				verbose;
 	int					raw_sockfd;
 	struct sockaddr_in	src_addr;
-	struct ethhdr*		ethernet_header;
+	struct ethhdr		*ethernet_header;
 	struct ether_arp	*arp_packet;
-	struct arphdr*		arp_header;
-	char				*host_mac_str;
-	char				*host_ip_str;
-	char				*host_mac_byte;
-	char				*host_ip_byte;
-	char				*target_mac;
-	char				*target_ip;
+	struct arphdr		*arp_header;
+	uint8_t				host_mac[ETH_ALEN];
+	uint8_t				host_ip[_MC_IPV4_BYTE_SIZE];
+	uint8_t				target_mac[ETH_ALEN];
+	uint8_t				target_ip[_MC_IPV4_BYTE_SIZE];
 }	_mc_t_data;
 
 extern _mc_t_data	_mc_g_data;
@@ -87,6 +77,7 @@ extern _mc_t_data	_mc_g_data;
 size_t	_mc_strlen(const char *s);
 void	_mc_bzero(void *s, size_t n);
 int		_mc_strncmp(const char *s1, const char *s2, size_t n);
+int		_mc_memcmp(const void *p1, const void *p2, size_t n);
 void	*_mc_memcpy(void *dest, const void *src, size_t n);
 int		_mc_isxdigit(int c);
 
@@ -96,6 +87,9 @@ void	_mc_print_ip(const unsigned char* ip);
 
 bool    _mc_is_ip_address_ipv4(const char *ip_addr);
 bool 	_mc_is_mac_address_valid(const char *mac_address);
+
+void    _mc_convert_string_to_byte_ip(const char* str_ip, uint8_t* byte_ip);
+void    _mc_convert_mac_string_to_bytes(const char* mac_string, unsigned char* mac_bytes);
 
 void	_mc_start_sniffing_paquets(void);
 

@@ -20,49 +20,24 @@ ARP Header
 Payload (if any)
 */
 
-int convert_ip_string_to_bytes(const char* ip_string, unsigned char* ip_bytes) {
-    // Split the IP address string into four components
-    char* token;
-    int i = 0;
-    token = strtok((char*)ip_string, ".");
-    while (token != NULL) {
-        // Convert each component from string to integer
-        int value = atoi(token);
-        if (value < 0 || value > 255) {
-            fprintf(stderr, "Invalid IP address component: %s\n", token);
-            return 0;
-        }
-        ip_bytes[i++] = (unsigned char)value;
-        token = strtok(NULL, ".");
-    }
-
-    // Check if all four components are present
-    if (i != 4) {
-        fprintf(stderr, "Invalid IP address: %s\n", ip_string);
-        return 0;
-    }
-
-    return 1;
-}
-
-_mc_t_packet	_mc_create_packet_for_spoofing(void)
+/* Define the structure of the packet according to the RFC 826 specification
+ We will use this structure to imitate an authentic packet
+ so that the reply to the ARP request will be accepted by the network
+*/
+unsigned char	*_mc_create_packet_for_spoofing(void)
 {
-	_mc_t_packet	packet;
-    struct ethhdr* eth_header = (struct ethhdr*)packet;
-	struct ether_arp* arp_header = (struct ether_arp*)(packet + ETHER_HDR_LEN);
+    // Create the ARP reply packet
+    unsigned char       packet[sizeof(struct ethhdr) + sizeof(struct ether_arp)];
+    struct ethhdr       *eth_header = (struct ethhdr*)packet;
+    struct ether_arp    *arp_header = (struct ether_arp*)(packet + sizeof(struct ethhdr));
 
-	_mc_memcpy(
-		packet.ethernet_header.h_dest,
-		_mc_g_data.ethernet_header.h_source, ETH_ALEN
-		);
-	_mc_memcpy(
-		packet.ethernet_header.h_source,
-		_mc_g_data.ethernet_header.h_sou, ETH_ALEN
-		);
-	packet.ethernet_header.h_proto = eth_header->h_proto = htons(ETH_P_ARP);
+	_mc_memcpy(eth_header->h_dest, _mc_g_data.ethernet_header->h_source, ETH_ALEN);
+	_mc_memcpy(eth_header->h_source, _mc_g_data.ethernet_header->h_source, ETH_ALEN);
+
+	eth_header->h_proto = htons(ETH_P_ARP);
 }
 
 void	_mc_run_arp_spoofing(void)
 {
-	_mc_t_packet	packet = _mc_create_packet_for_spoofing();
+	unsigned char	packet = _mc_create_packet_for_spoofing();
 }

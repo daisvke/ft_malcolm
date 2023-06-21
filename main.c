@@ -21,20 +21,14 @@ int	_mc_display_interface(void)
     for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next)
 	{
         // Check if the interface has an assigned IPv4 address and is up
-        if (ifa->ifa_addr != NULL &&
+        if (ifa->ifa_addr != NULL && /* has an assigned IP address */
 			ifa->ifa_addr->sa_family == AF_INET && /* IPv4 */
-            (ifa->ifa_flags & IFF_UP) && /* is up */
+            (ifa->ifa_flags & IFF_UP) && /* is active and connected to our device */
 			!(ifa->ifa_flags & IFF_LOOPBACK) && /* not localhost */
 			!(ifa->ifa_flags & IFF_NOARP)) /* accepts ARP */
 		{
-			// Get the IP address
+			// Get the interface name
             _mc_memcpy(active_interface, ifa->ifa_name, IFNAMSIZ);
-			// Get the MAC address
-           struct sockaddr_ll* s = (struct sockaddr_ll*)ifa->ifa_addr;
-            if (s->sll_halen > 0) {
-                memcpy(mac_address, s->sll_addr, ETH_ALEN);
-                break;
-            }
             break;
         }
     }
@@ -106,11 +100,19 @@ int	_mc_validate_and_assign_args(char *argv[])
 	}
 	printf("\n");
 
-	// Assign 
-	_mc_g_data.host_ip = argv[start];
-	_mc_g_data.host_mac = argv[start + 1];
-	_mc_g_data.target_ip = argv[start + 2];
-	_mc_g_data.target_mac = argv[start + 3];
+	// Assign
+	_mc_convert_string_to_byte_ip(argv[start], _mc_g_data.host_ip);
+	_mc_convert_mac_string_to_bytes(argv[start + 1], _mc_g_data.host_mac);
+	_mc_convert_string_to_byte_ip(argv[start + 2], _mc_g_data.target_ip);
+	_mc_convert_mac_string_to_bytes(argv[start + 3], _mc_g_data.target_mac);
+
+	// // Save string forms of IP and MAC addresses to the global variable
+	// // These will be used when displaying packet's data
+	// _mc_g_data.host_ip_str = argv[start];
+	// _mc_g_data.host_mac_str = argv[start + 1];
+	// _mc_g_data.target_ip_str = argv[start + 2];
+	// _mc_g_data.target_mac_str = argv[start + 3];
+	
 	return 0;
 }
 
