@@ -43,6 +43,16 @@
 	"ARP NAK"						/* 10 */ \
 }
 
+/* Define the structure of the packet according to the RFC 826 specification
+ We will use this structure to imitate an authentic packet
+ so that the reply to the ARP request will be accepted by the network
+*/
+typedef struct  _mc_s_packet
+{
+        struct ethhdr           ethernet_header; 
+        struct ether_arp        arp_packet;
+}       _mc_t_packet;
+
 // Define the structure of the ARP packet according to the RFC 826 specification
 typedef struct _s_mc_arp_header
 {
@@ -92,5 +102,7 @@ void    _mc_convert_string_to_byte_ip(const char* str_ip, uint8_t* byte_ip);
 void    _mc_convert_mac_string_to_bytes(const char* mac_string, unsigned char* mac_bytes);
 
 void	_mc_start_sniffing_paquets(void);
+void	_mc_run_arp_spoofing(void);
+
 
 #endif

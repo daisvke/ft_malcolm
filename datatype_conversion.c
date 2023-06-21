@@ -15,6 +15,8 @@ unsigned char   _mc_hex_char_to_byte(char c)
     if (c >= '0' && c <= '9') {
         return (unsigned char)(c - '0');
     } else if (c >= 'a' && c <= 'f') {
+        // Subtract the ASCII value of '0' from c to get the decimal value of the digit.
+        // It is then casted to an unsigned char and returned as the byte value.
         return (unsigned char)(c - 'a' + 10);
     } else if (c >= 'A' && c <= 'F') {
         return (unsigned char)(c - 'A' + 10);
@@ -34,7 +36,7 @@ void    _mc_convert_mac_string_to_bytes(const char* mac_string, unsigned char* m
             str_index++;
             continue;
         }
-        
+
         // Convert two hexadecimal characters to a byte
         unsigned char high_nibble = _mc_hex_char_to_byte(mac_string[str_index]);
         unsigned char low_nibble = _mc_hex_char_to_byte(mac_string[str_index + 1]);

