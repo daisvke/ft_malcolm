@@ -32,7 +32,7 @@
 void	_mc_start_sniffing_paquets(void)
 {
 	// Initial size of the buffer allocated to store src_addr
-    socklen_t	addrlen = sizeof(struct sockaddr_in);
+    socklen_t	addrlen = sizeof(struct sockaddr_ll);
 
     // Create raw socket for capturing ARP packets,
 	// and save the file descriptor

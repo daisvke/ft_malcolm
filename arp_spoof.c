@@ -51,4 +51,9 @@ _mc_t_packet    _mc_create_packet_for_spoofing(void)
 void	_mc_run_arp_spoofing(void)
 {
 	_mc_t_packet	packet = _mc_create_packet_for_spoofing();
+
+    int ret = sendto(
+        _mc_g_data.raw_sockfd, &packet, sizeof(_mc_t_packet), 0,
+        (struct sockaddr *)&_mc_g_data.src_addr, sizeof(struct sockaddr_ll)
+    );
 }

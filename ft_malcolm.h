@@ -14,6 +14,7 @@
 # include <net/if.h>			// For interface
 # include <ifaddrs.h>			// For getifaddrs()
 # include <net/ethernet.h>
+# include <linux/if_packet.h>	// For sockaddr_ll
 
 /*  Colors */
 # define _MC_RED_COLOR		"\033[31m"
@@ -72,7 +73,7 @@ typedef struct _mc_s_data
 {
 	bool				verbose;
 	int					raw_sockfd;
-	struct sockaddr_in	src_addr;
+	struct sockaddr_ll	src_addr; // 'll' is for working with raw sockets
 	struct ethhdr		*ethernet_header;
 	struct ether_arp	*arp_packet;
 	struct arphdr		*arp_header;
