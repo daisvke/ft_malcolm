@@ -29,7 +29,7 @@ void    _mc_convert_mac_string_to_bytes(const char* mac_string, unsigned char* m
     int str_index = 0;
 
     while (mac_string[str_index] && byte_index < 6) {
-        // Skip delimiters (':', '-' or any non-hex characters)
+        // Skip delimiters (':', '-')
         if (mac_string[str_index] == ':' || mac_string[str_index] == '-') {
             str_index++;
             continue;
