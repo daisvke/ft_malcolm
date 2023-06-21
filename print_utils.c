@@ -8,7 +8,8 @@ void	_mc_print_usage(void)
 		"HOST = this computer\n"
 		"TARGET = your target sending the ARP request\n\n"
 		"IP addresses have to be in the IPv4 format,\n"
-		"MAP addresses have to be in format xx:xx:xx:xx:xx:xx\n\n"
+		"MAP addresses have to be in format xx:xx:xx:xx:xx:xx\n"
+		"(Separator can be either ':' or '-')\n"
 		"-v: verbose\n\n"
 	);
 }

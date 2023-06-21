@@ -34,7 +34,7 @@ void    _mc_convert_mac_string_to_bytes(const char* mac_string, unsigned char* m
             str_index++;
             continue;
         }
-
+        
         // Convert two hexadecimal characters to a byte
         unsigned char high_nibble = _mc_hex_char_to_byte(mac_string[str_index]);
         unsigned char low_nibble = _mc_hex_char_to_byte(mac_string[str_index + 1]);
