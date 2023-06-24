@@ -102,7 +102,7 @@ bool 	_mc_is_mac_address_valid(const char *mac_address);
 void    _mc_convert_string_to_byte_ip(const char* str_ip, uint8_t* byte_ip);
 void    _mc_convert_mac_string_to_bytes(const char* mac_string, unsigned char* mac_bytes);
 
-void	_mc_start_sniffing_paquets(void);
+int		_mc_start_sniffing_paquets(void);
 void	_mc_run_arp_spoofing(void);
 
 

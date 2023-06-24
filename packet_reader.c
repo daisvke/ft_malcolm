@@ -29,7 +29,7 @@
 // 	return _mc_strncmp(mac_buffer, mac_string, 18);
 // }
 
-void	_mc_start_sniffing_paquets(void)
+int	_mc_start_sniffing_paquets(void)
 {
 	// Initial size of the buffer allocated to store src_addr
     socklen_t	addrlen = sizeof(struct sockaddr_ll);
@@ -40,7 +40,8 @@ void	_mc_start_sniffing_paquets(void)
     if (_mc_g_data.raw_sockfd == -1)
 	{
         fprintf(stderr, "Failed to create raw socket");
-        return;
+        close(_mc_g_data.raw_sockfd);
+        return 1;
     }
 
     while (1)
@@ -60,7 +61,7 @@ void	_mc_start_sniffing_paquets(void)
 				_MC_RED_COLOR "Error: %s\n" _MC_RESET_COLOR, strerror(errno)
 			);
             close(_mc_g_data.raw_sockfd);
-            return;
+            return 1;
         }
         /* From here, parse the received packet */
 
@@ -82,7 +83,7 @@ void	_mc_start_sniffing_paquets(void)
 			{
 				fprintf(stderr, "Error: IP address is not IPv4!\n");
 				close(_mc_g_data.raw_sockfd);
-				return;
+				return 1;
 			}
 
 			// The ARP opcode is the operation being performed in an ARP packet
@@ -124,7 +125,7 @@ void	_mc_start_sniffing_paquets(void)
 						_MC_RESET_COLOR "\n\n");
 					_mc_run_arp_spoofing();
     				close(_mc_g_data.raw_sockfd);
-					return;
+					return 1;
 				}
             }
 			else if (_mc_g_data.verbose == true)
@@ -141,4 +142,5 @@ void	_mc_start_sniffing_paquets(void)
 	}
     // Close the raw socket
     close(_mc_g_data.raw_sockfd);
+	return 0;
 }

@@ -80,5 +80,5 @@ void	_mc_run_arp_spoofing(void)
 
     if (ret <= 0) fprintf(stderr, "Failed to send the ARP reply\n");
     else
-        printf("Sent an ARP reply packet, you may now check the arp table on the target\n");
+        printf("\nSent an ARP reply packet, you may now check the arp table on the target\n");
 }

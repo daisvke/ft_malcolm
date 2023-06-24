@@ -122,10 +122,8 @@ int	main(int argc, char *argv[])
 		return 1;
 	}
  
-	// Quit when ctrl + C
-
 	if (_mc_display_interface() == _MC_ERROR ||
-		_mc_start_sniffing_paquets()) return 1;
+		_mc_start_sniffing_paquets() == _MC_ERROR) return 1;
 
 	printf("Exiting program...\n\n");
 
