@@ -106,13 +106,6 @@ int	_mc_validate_and_assign_args(char *argv[])
 	_mc_convert_string_to_byte_ip(argv[start + 2], _mc_g_data.target_ip);
 	_mc_convert_mac_string_to_bytes(argv[start + 3], _mc_g_data.target_mac);
 
-	// // Save string forms of IP and MAC addresses to the global variable
-	// // These will be used when displaying packet's data
-	// _mc_g_data.host_ip_str = argv[start];
-	// _mc_g_data.host_mac_str = argv[start + 1];
-	// _mc_g_data.target_ip_str = argv[start + 2];
-	// _mc_g_data.target_mac_str = argv[start + 3];
-	
 	return 0;
 }
 
@@ -128,10 +121,11 @@ int	main(int argc, char *argv[])
 		fprintf(stderr, "Not running with root privileges. Quitting...\n");
 		return 1;
 	}
+ 
+	// Quit when ctrl + C
 
-	if (_mc_display_interface() == _MC_ERROR) return 1;
-
-	_mc_start_sniffing_paquets();
+	if (_mc_display_interface() == _MC_ERROR ||
+		_mc_start_sniffing_paquets()) return 1;
 
 	printf("Exiting program...\n\n");
 
