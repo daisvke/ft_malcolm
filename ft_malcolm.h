@@ -15,6 +15,7 @@
 # include <ifaddrs.h>			// For getifaddrs()
 # include <net/ethernet.h>
 # include <linux/if_packet.h>	// For sockaddr_ll
+# include <signal.h>			// For signal()
 
 /*  Colors */
 # define _MC_RED_COLOR		"\033[31m"
@@ -72,6 +73,7 @@ typedef struct _s_mc_arp_header
 typedef struct _mc_s_data
 {
 	bool				verbose;
+	bool				stop_loop;
 	int					raw_sockfd;
 	struct sockaddr_ll	src_addr; // 'll' is for working with raw sockets
 	struct ethhdr		*ethernet_header;
@@ -95,6 +97,7 @@ int		_mc_isxdigit(int c);
 void	_mc_print_usage(void);
 void	_mc_print_mac(const unsigned char* mac);
 void	_mc_print_ip(const unsigned char* ip);
+void	_mc_handle_ctrlc(int sig);
 
 bool    _mc_is_ip_address_ipv4(const char *ip_addr);
 bool 	_mc_is_mac_address_valid(const char *mac_address);

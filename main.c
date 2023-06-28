@@ -7,8 +7,8 @@ _mc_t_data	_mc_g_data;
 with an assigned IP address, which will be the interface we can use */
 int	_mc_display_interface(void)
 {
-	struct	ifaddrs *ifaddr, *ifa;
-	char	active_interface[IFNAMSIZ];
+	struct	ifaddrs	*ifaddr, *ifa;
+	char			active_interface[IFNAMSIZ];
 
     // Retrieve the list of network interfaces
     if (getifaddrs(&ifaddr) < 0)

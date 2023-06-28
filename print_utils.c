@@ -10,6 +10,7 @@ void	_mc_print_usage(void)
 		"IP addresses have to be in the IPv4 format,\n"
 		"MAP addresses have to be in format xx:xx:xx:xx:xx:xx\n"
 		"(Separator can be either ':' or '-')\n"
+		"And letters can be both lower and upper case letters\n"
 		"-v: verbose\n\n"
 	);
 }
@@ -23,4 +24,13 @@ void	_mc_print_mac(const unsigned char* mac)
 void	_mc_print_ip(const unsigned char* ip)
 {
     printf("%u.%u.%u.%u\n", ip[0], ip[1], ip[2], ip[3]);
+}
+
+// Signal handler function
+void _mc_handle_ctrlc(int sig)
+{
+	(void)sig;
+	// Stop the main packet reading loop
+	_mc_g_data.stop_loop = true;
+    printf("\nCtrl+C caught.\n");
 }

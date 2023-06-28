@@ -31,6 +31,9 @@
 
 int	_mc_start_sniffing_paquets(void)
 {
+	// Set up the signal handler
+    signal(SIGINT, _mc_handle_ctrlc);
+
 	// Initial size of the buffer allocated to store src_addr
     socklen_t	addrlen = sizeof(struct sockaddr_ll);
 
@@ -44,99 +47,97 @@ int	_mc_start_sniffing_paquets(void)
         return 1;
     }
 
-    while (1)
+    while (_mc_g_data.stop_loop == false)
 	{
 		// Buffer used to save all paquets read by recvfrom()
    		 unsigned char	buffer[_MC_MAX_PACKET_SIZE] = {0};
 
         /* Read packets from the raw socket with RECVFROM */
-        ssize_t bytes_read = recvfrom(
-			_mc_g_data.raw_sockfd,
-			buffer, _MC_MAX_PACKET_SIZE,
-			0, (struct sockaddr*)&_mc_g_data.src_addr, &addrlen
+        ssize_t bytes_read =
+			recvfrom(
+				_mc_g_data.raw_sockfd,
+				buffer,
+				_MC_MAX_PACKET_SIZE,
+				MSG_DONTWAIT,
+				(struct sockaddr*)&_mc_g_data.src_addr, &addrlen
 		);
-        if (bytes_read < 0)
+        if (bytes_read > 0)
 		{
-            fprintf(stderr,
-				_MC_RED_COLOR "Error: %s\n" _MC_RESET_COLOR, strerror(errno)
-			);
-            close(_mc_g_data.raw_sockfd);
-            return 1;
-        }
-        /* From here, parse the received packet */
+			/* From here, parse the received packet */
 
-		// The buffer contains the whole packet,
-		// and the firt header in the packet is the ethernet header
-        _mc_g_data.ethernet_header = (struct ethhdr*)buffer;
+			// The buffer contains the whole packet,
+			// and the firt header in the packet is the ethernet header
+			_mc_g_data.ethernet_header = (struct ethhdr*)buffer;
 
-        // Check if the Ethernet type is ARP
-        if (ntohs(_mc_g_data.ethernet_header->h_proto) == ETH_P_ARP)
-		{
-			
-			// The ARP packet is located just after tje ethernet header
-			_mc_g_data.arp_packet =
-				(struct ether_arp *)(buffer + sizeof(struct ethhdr));
-
-            // The ARP header is the first member of the ether_arp struct
-            _mc_g_data.arp_header = (struct arphdr*)_mc_g_data.arp_packet;
-			if (ntohs(_mc_g_data.arp_header->ar_pro) != ETH_P_IP)
+			// Check if the Ethernet type is ARP
+			if (ntohs(_mc_g_data.ethernet_header->h_proto) == ETH_P_ARP)
 			{
-				fprintf(stderr, "Error: IP address is not IPv4!\n");
-				close(_mc_g_data.raw_sockfd);
-				return 1;
-			}
-
-			// The ARP opcode is the operation being performed in an ARP packet
-			uint16_t arop_code = ntohs(_mc_g_data.arp_header->ar_op);
-
-            // Check if the ARP operation is a request
-            if (arop_code == ARPOP_REQUEST)
-			{
-                // Extract the sender IP and MAC addresses
-				unsigned char* sender_mac = _mc_g_data.arp_packet->arp_sha;
-                unsigned char* sender_ip = _mc_g_data.arp_packet->arp_spa;
-
-                // Extract the target IP and MAC addresses
-                unsigned char* target_mac = _mc_g_data.arp_packet->arp_tha;
-                unsigned char* target_ip = _mc_g_data.arp_packet->arp_tpa;
 				
-				// Only display packet details if in verbose mode
-				if (_mc_g_data.verbose == true)
-				{
-					// Print the sender and target IP and MAC addresses
-					printf(_MC_GREEN_COLOR "Sender MAC:\t");
-					_mc_print_mac(sender_mac);
-					printf("Sender IP:\t");
-					_mc_print_ip(sender_ip);
+				// The ARP packet is located just after tje ethernet header
+				_mc_g_data.arp_packet =
+					(struct ether_arp *)(buffer + sizeof(struct ethhdr));
 
-					printf(_MC_RED_COLOR "Target MAC:\t");
-					_mc_print_mac(target_mac);
-					printf("Target IP:\t");
-					_mc_print_ip(target_ip);
-					printf(_MC_RESET_COLOR "\n");
-				}
-				// When the source data from the packet matches the data
-				// given through command line, we launch the ARP spoofing
-				if (_mc_memcmp(sender_ip, _mc_g_data.target_ip, _MC_IPV4_BYTE_SIZE) == 0 &&
-					_mc_memcmp(sender_mac, _mc_g_data.target_mac, ETH_ALEN) == 0)
+				// The ARP header is the first member of the ether_arp struct
+				_mc_g_data.arp_header = (struct arphdr*)_mc_g_data.arp_packet;
+				if (ntohs(_mc_g_data.arp_header->ar_pro) != ETH_P_IP)
 				{
-					printf(_MC_YELLOW_COLOR
-						"Matched the target IP and MAC addresses, running ARP spoofing..."
-						_MC_RESET_COLOR "\n\n");
-					_mc_run_arp_spoofing();
-    				close(_mc_g_data.raw_sockfd);
+					fprintf(stderr, "Error: IP address is not IPv4!\n");
+					close(_mc_g_data.raw_sockfd);
 					return 1;
 				}
-            }
-			else if (_mc_g_data.verbose == true)
-			{
-				const char* op_codes[] = _MC_OP_CODE_ARRAY;
 
-				printf(
-					_MC_YELLOW_COLOR "Received an %s, not an ARP request..."
-					_MC_RESET_COLOR "\n\n",
-					op_codes[arop_code - 1]
-				);
+				// The ARP opcode is the operation being performed in an ARP packet
+				uint16_t arop_code = ntohs(_mc_g_data.arp_header->ar_op);
+
+				// Check if the ARP operation is a request
+				if (arop_code == ARPOP_REQUEST)
+				{
+					// Extract the sender IP and MAC addresses
+					unsigned char* sender_mac = _mc_g_data.arp_packet->arp_sha;
+					unsigned char* sender_ip = _mc_g_data.arp_packet->arp_spa;
+
+					// Extract the target IP and MAC addresses
+					unsigned char* target_mac = _mc_g_data.arp_packet->arp_tha;
+					unsigned char* target_ip = _mc_g_data.arp_packet->arp_tpa;
+					
+					// Only display packet details if in verbose mode
+					if (_mc_g_data.verbose == true)
+					{
+						// Print the sender and target IP and MAC addresses
+						printf(_MC_GREEN_COLOR "Sender MAC:\t");
+						_mc_print_mac(sender_mac);
+						printf("Sender IP:\t");
+						_mc_print_ip(sender_ip);
+
+						printf(_MC_RED_COLOR "Target MAC:\t");
+						_mc_print_mac(target_mac);
+						printf("Target IP:\t");
+						_mc_print_ip(target_ip);
+						printf(_MC_RESET_COLOR "\n");
+					}
+					// When the source data from the packet matches the data
+					// given through command line, we launch the ARP spoofing
+					if (_mc_memcmp(sender_ip, _mc_g_data.target_ip, _MC_IPV4_BYTE_SIZE) == 0 &&
+						_mc_memcmp(sender_mac, _mc_g_data.target_mac, ETH_ALEN) == 0)
+					{
+						printf(_MC_YELLOW_COLOR
+							"Matched the target IP and MAC addresses, running ARP spoofing..."
+							_MC_RESET_COLOR "\n\n");
+						_mc_run_arp_spoofing();
+						close(_mc_g_data.raw_sockfd);
+						return 1;
+					}
+				}
+				else if (_mc_g_data.verbose == true)
+				{
+					const char* op_codes[] = _MC_OP_CODE_ARRAY;
+
+					printf(
+						_MC_YELLOW_COLOR "Received an %s, not an ARP request..."
+						_MC_RESET_COLOR "\n\n",
+						op_codes[arop_code - 1]
+					);
+				}
 			}
 		}
 	}
