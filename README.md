@@ -40,4 +40,5 @@ And letters can be both lower and upper case letters<br />
 
 ## Additional functionalities
 * Checks for root privileges when launched
+* Displays the hostname for the source and the target
 * Displays information about all received random ARP request packets while the verbose mode is on

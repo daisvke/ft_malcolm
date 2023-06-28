@@ -52,3 +52,17 @@ void	_mc_print_packet_info()
 		printf(_MC_RESET_COLOR "\n");
 	}
 }
+
+void	_mc_print_hostname(const char *ip_addr)
+{
+	struct in_addr addr;
+    struct hostent *host;
+
+    // Convert IP address from string to binary form
+    if (inet_pton(AF_INET, ip_addr, &addr) <= 0) return;
+
+    // Retrieve host information by IP address
+    host = gethostbyaddr(&addr, sizeof(addr), AF_INET);
+    if (host == NULL) printf("Hostname: unknown\n");
+    else printf("Hostname: %s\n", host->h_name);
+}

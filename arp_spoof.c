@@ -63,7 +63,7 @@ void	_mc_run_arp_spoofing(void)
     printf("h_dest: ");_mc_print_mac(packet.ethernet_header.h_dest);
 	printf("h_src: "); _mc_print_mac(packet.ethernet_header.h_source);
 
-    printf("ARP header:\n");
+    printf("\nARP header:\n");
 	printf("tha: ");_mc_print_mac(packet.arp_packet.arp_tha);
 	printf("sha: ");_mc_print_mac(packet.arp_packet.arp_sha);
 	printf("spa: ");_mc_print_ip(packet.arp_packet.arp_spa);

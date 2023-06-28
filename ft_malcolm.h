@@ -17,6 +17,9 @@
 # include <linux/if_packet.h>	// For sockaddr_ll
 # include <signal.h>			// For signal()
 
+#include <netdb.h>
+#include <arpa/inet.h>
+
 /*  Colors */
 # define _MC_RED_COLOR		"\033[31m"
 # define _MC_GREEN_COLOR	"\033[32m"
@@ -98,6 +101,7 @@ void	_mc_print_usage(void);
 void	_mc_print_mac(const unsigned char* mac);
 void	_mc_print_ip(const unsigned char* ip);
 void	_mc_print_packet_info(void);
+void	_mc_print_hostname(const char *ip_addr);
 
 bool    _mc_is_ip_address_ipv4(const char *ip_addr);
 bool 	_mc_is_mac_address_valid(const char *mac_address);

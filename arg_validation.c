@@ -13,6 +13,8 @@ bool    _mc_is_ip_address_ipv4(const char *ip_addr)
 			_MC_RESET_COLOR "\n\n", (const char*)ip_addr);
         return false;
     }
+    _mc_print_hostname(ip_addr);
+
     return printf("IP value %d:\t%s (IPv4)\n", i, (const char*)ip_addr);
 }
 
