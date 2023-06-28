@@ -23,7 +23,10 @@ Payload (if any)
 _mc_t_packet    _mc_create_packet_for_spoofing(void)
 {
     // Create the ARP reply packet
-    _mc_t_packet    packet = {0};
+    _mc_t_packet    packet;
+    // Init packet to zero
+    _mc_bzero(&packet, sizeof(_mc_t_packet));
+    // Assign
     packet.ethernet_header = *_mc_g_data.ethernet_header;
     packet.arp_packet = *_mc_g_data.arp_packet;
 
