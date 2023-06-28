@@ -7,25 +7,6 @@ Protocol spoofing/poisoning method, which is one of the most basic Man In The Mi
 attacks. This attack is possible using a vulnerability present in the the way the ARP
 protocol works and interacts in a network.
 
-## Allowed functions
-
-Only the following functions were used:
-
-◦ sendto, recvfrom.
-◦ socket, setsockopt.
-◦ inet_pton, inet_ntop.
-◦ if_nametoindex, sleep.
-◦ getuid, close.
-◦ sigaction, signal.
-◦ inet_addr.
-◦ gethostbyname.
-◦ getaddrinfo, freeaddrinfo.
-◦ getifaddrs, freeifaddrs.
-◦ htons, ntohs.
-◦ strerror / gai_strerror.
-◦ printf and its family.
-◦ write, malloc.
-
 ## Usage
 
 Usage: [HOST IP] [HOST MAC] [TARGET IP] [TARGET MAC]<br />
@@ -39,6 +20,7 @@ And letters can be both lower and upper case letters<br />
 -v: verbose
 
 ## Additional functionalities
+
 * Checks for root privileges when launched
 * Displays the hostname for the source and the target
-* Displays information about all received random ARP request packets while the verbose mode is on
+* While the verbose mode is on, it displays information about all received random ARP request packets
