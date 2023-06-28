@@ -9,7 +9,8 @@ protocol works and interacts in a network.
 
 ## Usage
 
-Usage: [HOST IP] [HOST MAC] [TARGET IP] [TARGET MAC]<br />
+```
+[HOST IP] [HOST MAC] [TARGET IP] [TARGET MAC]<br />
 In that particular order.<br />
 HOST = this computer<br />
 TARGET = your target sending the ARP request<br />
@@ -18,6 +19,7 @@ MAP addresses have to be in format xx:xx:xx:xx:xx:xx<br />
 (Separator can be either ':' or '-')<br />
 And letters can be both lower and upper case letters<br />
 -v: verbose
+```
 
 ## Additional functionalities
 
