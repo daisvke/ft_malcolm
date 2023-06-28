@@ -10,14 +10,14 @@ protocol works and interacts in a network.
 ## Usage
 
 ```
-[HOST IP] [HOST MAC] [TARGET IP] [TARGET MAC]<br />
-In that particular order.<br />
-HOST = this computer<br />
-TARGET = your target sending the ARP request<br />
-IP addresses have to be in the IPv4 format,<br />
-MAP addresses have to be in format xx:xx:xx:xx:xx:xx<br />
-(Separator can be either ':' or '-')<br />
-And letters can be both lower and upper case letters<br />
+[HOST IP] [HOST MAC] [TARGET IP] [TARGET MAC]
+In that particular order.
+HOST = this computer
+TARGET = your target sending the ARP request
+IP addresses have to be in the IPv4 format,
+MAP addresses have to be in format xx:xx:xx:xx:xx:xx
+(Separator can be either ':' or '-')
+And letters can be both lower and upper case letters
 -v: verbose
 ```
 
