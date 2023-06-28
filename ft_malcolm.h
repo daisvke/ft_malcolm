@@ -97,7 +97,7 @@ int		_mc_isxdigit(int c);
 void	_mc_print_usage(void);
 void	_mc_print_mac(const unsigned char* mac);
 void	_mc_print_ip(const unsigned char* ip);
-void	_mc_handle_ctrlc(int sig);
+void	_mc_print_packet_info(void);
 
 bool    _mc_is_ip_address_ipv4(const char *ip_addr);
 bool 	_mc_is_mac_address_valid(const char *mac_address);
@@ -107,6 +107,5 @@ void    _mc_convert_mac_string_to_bytes(const char* mac_string, unsigned char* m
 
 int		_mc_start_sniffing_paquets(void);
 void	_mc_run_arp_spoofing(void);
-
 
 #endif

@@ -37,3 +37,7 @@ MAP addresses have to be in format xx:xx:xx:xx:xx:xx<br />
 (Separator can be either ':' or '-')<br />
 And letters can be both lower and upper case letters<br />
 -v: verbose
+
+## Additional functionalities
+* Checks for root privileges when launched
+* Displays information about all received random ARP request packets while the verbose mode is on

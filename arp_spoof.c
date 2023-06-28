@@ -23,7 +23,7 @@ Payload (if any)
 _mc_t_packet    _mc_create_packet_for_spoofing(void)
 {
     // Create the ARP reply packet
-    _mc_t_packet        packet = {0};
+    _mc_t_packet    packet = {0};
     packet.ethernet_header = *_mc_g_data.ethernet_header;
     packet.arp_packet = *_mc_g_data.arp_packet;
 
@@ -52,25 +52,21 @@ void	_mc_run_arp_spoofing(void)
 {
 	_mc_t_packet	packet = _mc_create_packet_for_spoofing();
 
-    /* Send the fake ARP reply using the created packet
-        (Destination port is inside src_addr)
-    */
+    /* Send the fake ARP reply using the custom packet
+        (Destination port is inside src_addr) */
     printf(_MC_YELLOW_COLOR
         "Now sending an ARP reply to the target address with spoofed source..."
         _MC_RESET_COLOR "\n\n"
     );
 
+    printf("Ethernet header:\n");
     printf("h_dest: ");_mc_print_mac(packet.ethernet_header.h_dest);
-    // The source MAC is falsly set to the host's MAC address
 	printf("h_src: "); _mc_print_mac(packet.ethernet_header.h_source);
 
-    // The target MAC is replaced by the ARP request's MAC address
+    printf("ARP header:\n");
 	printf("tha: ");_mc_print_mac(packet.arp_packet.arp_tha);
-    // Again, th;_mc_print_ip(e source MAC is falsly set to the host's MAC addres)s
 	printf("sha: ");_mc_print_mac(packet.arp_packet.arp_sha);
-    // The sende;_mc_print_ip(r's IP is falsly set to the former target IP address of the ARP reques)t
 	printf("spa: ");_mc_print_ip(packet.arp_packet.arp_spa);
-    // The targe;_mc_print_ip(t's IP is the one given from the command lin)e
 	printf("tpa: ");_mc_print_ip(packet.arp_packet.arp_tpa);
 
     int ret = sendto(

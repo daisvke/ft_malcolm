@@ -26,11 +26,29 @@ void	_mc_print_ip(const unsigned char* ip)
     printf("%u.%u.%u.%u\n", ip[0], ip[1], ip[2], ip[3]);
 }
 
-// Signal handler function
-void _mc_handle_ctrlc(int sig)
+void	_mc_print_packet_info()
 {
-	(void)sig;
-	// Stop the main packet reading loop
-	_mc_g_data.stop_loop = true;
-    printf("\nCtrl+C caught.\n");
+	// Extract the sender IP and MAC addresses
+	unsigned char* sender_mac = _mc_g_data.arp_packet->arp_sha;
+	unsigned char* sender_ip = _mc_g_data.arp_packet->arp_spa;
+
+	// Extract the target IP and MAC addresses
+	unsigned char* target_mac = _mc_g_data.arp_packet->arp_tha;
+	unsigned char* target_ip = _mc_g_data.arp_packet->arp_tpa;
+	
+	// Only display packet details if in verbose mode
+	if (_mc_g_data.verbose == true)
+	{
+		// Print the sender and target IP and MAC addresses
+		printf(_MC_GREEN_COLOR "Sender MAC:\t");
+		_mc_print_mac(sender_mac);
+		printf("Sender IP:\t");
+		_mc_print_ip(sender_ip);
+
+		printf(_MC_RED_COLOR "Target MAC:\t");
+		_mc_print_mac(target_mac);
+		printf("Target IP:\t");
+		_mc_print_ip(target_ip);
+		printf(_MC_RESET_COLOR "\n");
+	}
 }
