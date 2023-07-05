@@ -94,7 +94,9 @@ to the network. Here's a diagram illustrating such packet:
     |        (variable length)      |
     +-------------------------------+
 ```
-To access a specific layer within a network packet, we can navigate to that layer by moving a certain number of bytes from the start of the packet. Each layer within the packet contributes a specific number of bytes to its overall structure. By understanding the layout of the packet and the headers associated with each layer, we can calculate the offset needed to reach the desired layer. This allows us to extract or manipulate the information specific to that layer.<br />
+To access a specific layer within a network packet, we can navigate to that layer by moving a certain number of bytes from the start of the packet. <br />
+Each layer within the packet contributes a specific number of bytes to its overall structure.<br />
+By understanding the layout of the packet and the headers associated with each layer, we can calculate the offset needed to reach the desired layer. This allows us to extract or manipulate the information specific to that layer.<br />
 To determine the length of a variable IP address in the packet, we can rely on the IP type provided within the IP header. 
 
 ## Additional functionalities
@@ -106,4 +108,5 @@ To determine the length of a variable IP address in the packet, we can rely on t
 ## Useful links
 
 https://www.youtube.com/watch?v=YJGGYKAV4pA<br />
-https://www.youtube.com/watch?v=EC1slXCT3bg
+https://www.youtube.com/watch?v=EC1slXCT3bg<br />
+https://www.rfc-editor.org/rfc/rfc826
