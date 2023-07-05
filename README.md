@@ -4,10 +4,29 @@
 
 This project is about implementing the Address Resolution Protocol spoofing/poisoning method, which is one of the most basic Man In The Middle attacks.<br />
 This attack is possible using a vulnerability present in the way the ARP protocol works and interacts in a network.<br />
+
+## Usage
+
+```
+[HOST IP] [HOST MAC] [TARGET IP] [TARGET MAC]
+In that particular order.
+HOST = this computer
+TARGET = your target sending the ARP request
+IP addresses have to be in the IPv4 format,
+MAP addresses have to be in format xx:xx:xx:xx:xx:xx
+(Separator can be either ':' or '-')
+And letters can be both lower and upper case letters
+-v: verbose
+```
+
+## Technical aspects
+# ARP spoofing
+
 ARP spoofing is a technique used to manipulate network communication by sending forged ARP packets. In this attack, a malicious actor crafts and sends ARP packets over a network, tricking the network devices into associating the attacker's MAC address with a legitimate IP address. This allows the attacker to intercept and manipulate network traffic. By utilizing raw sockets, the attacker can create and send custom ARP packets, enabling them to carry out the spoofing attack.
 ```
     1. Monitoring the Network:
-        Attacker listens to the network, capturing ARP packets through raw socket for sending and receiving network packets.
+        Attacker listens to the network, capturing ARP packets
+		through raw socket for sending and receiving network packets.
         Analyzes the captured packets to identify potential targets.
 
     2. Crafting Spoofed ARP Packets:
@@ -20,14 +39,15 @@ ARP spoofing is a technique used to manipulate network communication by sending 
 
     4. Updating ARP Tables:
         Target devices receive the spoofed ARP packets.
-        ARP tables on target devices are updated, associating the attacker's MAC address with the target IP address.
+        ARP tables on target devices are updated, associating the
+		attacker's MAC address with the target IP address.
 
     5. Interception and Manipulation:
-        Attacker now controls network communication between the target and other devices.
+        Attacker now controls network communication between the 
+		target and other devices.
         Can intercept, modify, or redirect network traffic as desired.
 ```
 
-## Technical aspects
 # Raw socket
 
 A raw socket is a type of network socket that provides direct access to the underlying network protocols at a lower level than the standard socket APIs. It allows applications to send and receive network packets at a raw level, bypassing the higher-level protocols and operating system's network stack.
@@ -75,20 +95,6 @@ to the network. Here's a diagram illustrating such packet:
 
 To access a specific layer within a network packet, we can navigate to that layer by moving a certain number of bytes from the start of the packet. Each layer within the packet contributes a specific number of bytes to its overall structure. By understanding the layout of the packet and the headers associated with each layer, we can calculate the offset needed to reach the desired layer. This allows us to extract or manipulate the information specific to that layer.<br />
 To determine the length of a variable IP address in the packet, we can rely on the IP type provided within the IP header. 
-```
-
-## Usage
-
-```
-[HOST IP] [HOST MAC] [TARGET IP] [TARGET MAC]
-In that particular order.
-HOST = this computer
-TARGET = your target sending the ARP request
-IP addresses have to be in the IPv4 format,
-MAP addresses have to be in format xx:xx:xx:xx:xx:xx
-(Separator can be either ':' or '-')
-And letters can be both lower and upper case letters
--v: verbose
 ```
 
 ## Additional functionalities
