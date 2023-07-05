@@ -57,42 +57,25 @@ With a raw socket, an application can construct and manipulate network packets a
 
 ### Network packet
 When making an ARP request/reply, a packet is generated and sent
-to the network. Here's a diagram illustrating such packet:
-
+to the network. Here's the structure of such packet:
 ```
-	// Ethernet header
-    +-------------------------------+
-    |  Destination MAC Address      |
-    |        (6 bytes)              |
-    +-------------------------------+
-    |   Source MAC Address          |
-    |        (6 bytes)              |
-    +-------------------------------+
-    |        EtherType (2 bytes)    |
-    +-------------------------------+
+Ethernet Header
+  |- Destination MAC Address
+  |- Source MAC Address
+  |- EtherType (ARP: 0x0806)
 
-	// ARP header
-    +-------------------------------+
-    |    Hardware Type (2 bytes)    |
-    +-------------------------------+
-    |    Protocol Type (2 bytes)    |
-    +-------------------------------+
-    |Hw Addr Len (1 byte)|Prot Addr |
-    +-------------------------------+
-    |    Operation (2 bytes)        |
-    +-------------------------------+
-    |    Sender Hardware Address    |
-    |        (variable length)      |
-    +-------------------------------+
-    |    Sender Protocol Address    |
-    |        (variable length)      |
-    +-------------------------------+
-    |    Target Hardware Address    |
-    |        (variable length)      |
-    +-------------------------------+
-    |    Target Protocol Address    |
-    |        (variable length)      |
-    +-------------------------------+
+ARP Header
+  |- Hardware Type (Ethernet: 1)
+  |- Protocol Type (IPv4: 0x0800)
+  |- Hardware Address Length (MAC address length: 6)
+  |- Protocol Address Length (IPv4 address length: 4)
+  |- Operation (ARP Reply: 2)
+  |- Sender MAC Address
+  |- Sender IP Address
+  |- Target MAC Address
+  |- Target IP Address
+
+Payload (if any)
 ```
 To access a specific layer within a network packet, we can navigate to that layer by moving a certain number of bytes from the start of the packet. <br />
 Each layer within the packet contributes a specific number of bytes to its overall structure.<br />
