@@ -21,7 +21,7 @@ And letters can be both lower and upper case letters
 ```
 
 ## Technical aspects
-# ARP spoofing
+### ARP spoofing
 
 ARP spoofing is a technique used to manipulate network communication by sending forged ARP packets. In this attack, a malicious actor crafts and sends ARP packets over a network, tricking the network devices into associating the attacker's MAC address with a legitimate IP address. This allows the attacker to intercept and manipulate network traffic. By utilizing raw sockets, the attacker can create and send custom ARP packets, enabling them to carry out the spoofing attack.
 ```
@@ -49,13 +49,13 @@ ARP spoofing is a technique used to manipulate network communication by sending 
         Can intercept, modify, or redirect network traffic as desired.
 ```
 
-# Raw socket
+### Raw socket
 
 A raw socket is a type of network socket that provides direct access to the underlying network protocols at a lower level than the standard socket APIs. It allows applications to send and receive network packets at a raw level, bypassing the higher-level protocols and operating system's network stack.
 
 With a raw socket, an application can construct and manipulate network packets at a granular level, including crafting custom headers and handling protocols that are not typically accessible through higher-level APIs. Raw sockets operate at the network or data link layer, depending on the specific implementation and configuration.
 
-# Network packet
+### Network packet
 When making an ARP request/reply, a packet is generated and sent
 to the network. Here's a diagram illustrating such packet:
 
