@@ -27,8 +27,8 @@ _mc_t_packet    _mc_create_packet_for_spoofing(void)
     // Init packet to zero
     _mc_bzero(&packet, sizeof(_mc_t_packet));
     // Assign
-    packet.ethernet_header = *_mc_g_data.ethernet_header;
-    packet.arp_packet = *_mc_g_data.arp_packet;
+    packet.ethernet_header	= *_mc_g_data.ethernet_header;
+    packet.arp_packet		= *_mc_g_data.arp_packet;
 
     /* Spoofing the ethernet header */
 
@@ -77,7 +77,7 @@ void	_mc_run_arp_spoofing(void)
         (struct sockaddr *)&_mc_g_data.src_addr, sizeof(struct sockaddr_ll)
     );
 
-    if (ret <= 0) fprintf(stderr, "Failed to send the ARP reply\n");
+    if (ret <= 0) fprintf(stderr, _MC_RED_CROSS "Failed to send the ARP reply\n");
     else
         printf("\nSent an ARP reply packet, you may now check the arp table on the target\n");
 }

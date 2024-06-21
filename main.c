@@ -75,7 +75,7 @@ int	_mc_check_argc(size_t argc, char *argv[])
 				_MC_RESET_COLOR "\n\n");
 			return 1;
 		}
-		printf(_MC_GREEN_ASTERISK " Activated verbose mode\n");
+		printf(_MC_GREEN_ASTERISK " Verbose mode\n");
 	}
 	return 0;
 }

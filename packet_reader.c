@@ -38,8 +38,8 @@ int	_mc_handle_received_packet(unsigned char *buffer)
 		if (arop_code == ARPOP_REQUEST)
 		{
 			// Extract the sender IP and MAC addresses
-			unsigned char* sender_mac = _mc_g_data.arp_packet->arp_sha;
-			unsigned char* sender_ip = _mc_g_data.arp_packet->arp_spa;
+			unsigned char* sender_mac	= _mc_g_data.arp_packet->arp_sha;
+			unsigned char* sender_ip	= _mc_g_data.arp_packet->arp_spa;
 			
 			_mc_print_packet_info(); /* Only if verbose mode is on */
 

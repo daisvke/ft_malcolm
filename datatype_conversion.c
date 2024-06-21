@@ -13,12 +13,15 @@ void    _mc_convert_string_to_byte_ip(const char* str_ip, uint8_t* byte_ip)
 unsigned char   _mc_hex_char_to_byte(char c)
 {
     if (c >= '0' && c <= '9') {
-        return (unsigned char)(c - '0');
-    } else if (c >= 'a' && c <= 'f') {
         // Subtract the ASCII value of '0' from c to get the decimal value of the digit.
         // It is then casted to an unsigned char and returned as the byte value.
+        return (unsigned char)(c - '0');
+    } else if (c >= 'a' && c <= 'f') {
+		// By subtracting the ASCII value of 'a' from the character c, we get the offset
+		// from 'a'. Adding 10 ensures that 'a' corresponds to 10, 'b' to 11, and so on.
         return (unsigned char)(c - 'a' + 10);
     } else if (c >= 'A' && c <= 'F') {
+		// Same logic but for upppercase letters
         return (unsigned char)(c - 'A' + 10);
     } else {
         return 0; // Invalid character, return 0 as default
