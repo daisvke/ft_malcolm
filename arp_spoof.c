@@ -58,7 +58,7 @@ void	_mc_run_arp_spoofing(void)
     /* Send the fake ARP reply using the custom packet
         (Destination port is inside src_addr) */
     printf(_MC_YELLOW_COLOR
-        "Now sending an ARP reply to the target address with spoofed source..."
+        ">> Now sending an ARP reply to the target address with spoofed source <<"
         _MC_RESET_COLOR "\n\n"
     );
 

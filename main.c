@@ -13,7 +13,7 @@ int	_mc_display_interface(void)
     // Retrieve the list of network interfaces
     if (getifaddrs(&ifaddr) < 0)
 	{
-        fprintf(stderr, _MC_RED_COLOR "ERROR: %s\n", strerror(errno));
+        fprintf(stderr, _MC_RED_CROSS _MC_RED_COLOR " ERROR: %s\n", strerror(errno));
         return 1;
     }
 
@@ -35,10 +35,10 @@ int	_mc_display_interface(void)
 
     // Print the active interface name
     if (_mc_strlen(active_interface) > 0)
-        printf("Active Interface: %s\n\n", active_interface);
+        printf(_MC_GREEN_ASTERISK " Active Interface: %s\n\n", active_interface);
     else {
-        fprintf(stderr, _MC_RED_COLOR
-			"No active interface with IPv4 address found"
+        fprintf(stderr, _MC_RED_CROSS _MC_RED_COLOR
+			" No active interface with IPv4 address found"
 			_MC_RESET_COLOR "\n\n");
     	freeifaddrs(ifaddr);
 		return 1;
@@ -51,16 +51,18 @@ int	_mc_display_interface(void)
 
 int	_mc_check_argc(size_t argc, char *argv[])
 {
+	// Check if we have the right number of arguments
 	if (argc < 5 || argc > 6)
 	{
-        fprintf(stderr, _MC_RED_COLOR "Wrong number of argument."
+        fprintf(stderr,
+			_MC_RED_CROSS _MC_RED_COLOR " Wrong number of argument."
 			_MC_RESET_COLOR "\n\n");
 		_mc_print_usage();
 		return 1;
 	}
 
 	// The 5th argument is only present when the "-v" (verbose) option is used
-	// and can only exist at pos 1 or 5
+	// and can only exist at argument position 1 or 5
 	if (argc == 6)
 	{
 		if (_mc_strncmp(argv[1], "-v", _mc_strlen(argv[1])) == 0 ||
@@ -68,11 +70,12 @@ int	_mc_check_argc(size_t argc, char *argv[])
 			_mc_g_data.verbose = true;
 		else {
 			_mc_print_usage();
-			fprintf(stderr, _MC_RED_COLOR "Unknown 5th argument"
+			fprintf(stderr,
+				_MC_RED_CROSS _MC_RED_COLOR " Unknown 5th argument"
 				_MC_RESET_COLOR "\n\n");
 			return 1;
 		}
-		printf("[*] Activated verbose mode\n");
+		printf(_MC_GREEN_ASTERISK " Activated verbose mode\n");
 	}
 	return 0;
 }
@@ -111,17 +114,20 @@ int	_mc_validate_and_assign_args(char *argv[])
 
 int	main(int argc, char *argv[])
 {
+	// Check the given arguments and assign them to our globals
 	if (_mc_check_argc(argc, argv) == _MC_ERROR ||
 		_mc_validate_and_assign_args(argv) == _MC_ERROR) return 1;
 
 	// Check for root privileges
 	if (getuid() == 0)
-		printf("Root privileges detected\n");
+		printf(_MC_GREEN_ASTERISK " Root privileges\n");
 	else {
-		fprintf(stderr, "Not running with root privileges. Quitting...\n");
+		fprintf(stderr,
+		_MC_RED_CROSS " Not running with root privileges. Quitting...\n");
 		return 1;
 	}
  
+	// Display the detected interface and run the program
 	if (_mc_display_interface() == _MC_ERROR ||
 		_mc_start_sniffing_paquets() == _MC_ERROR) return 1;
 

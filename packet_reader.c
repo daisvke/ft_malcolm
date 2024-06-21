@@ -26,7 +26,7 @@ int	_mc_handle_received_packet(unsigned char *buffer)
 		_mc_g_data.arp_header = (struct arphdr*)_mc_g_data.arp_packet;
 		if (ntohs(_mc_g_data.arp_header->ar_pro) != ETH_P_IP)
 		{
-			fprintf(stderr, "Error: IP address is not IPv4!\n");
+			fprintf(stderr, _MC_RED_CROSS " Error: IP address is not IPv4!\n");
 			close(_mc_g_data.raw_sockfd);
 			return 1;
 		}
@@ -92,7 +92,7 @@ int	_mc_start_sniffing_paquets(void)
     _mc_g_data.raw_sockfd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
     if (_mc_g_data.raw_sockfd == -1)
 	{
-        fprintf(stderr, "Failed to create raw socket");
+        fprintf(stderr, _MC_RED_CROSS " Failed to create raw socket");
         close(_mc_g_data.raw_sockfd);
         return 1;
     }

@@ -25,6 +25,8 @@
 # define _MC_GREEN_COLOR	"\033[32m"
 # define _MC_YELLOW_COLOR	"\033[33m"
 # define _MC_RESET_COLOR	"\033[0m"
+# define _MC_GREEN_ASTERISK	"[\033[32m*\033[0m]"
+# define _MC_RED_CROSS		"[\033[31mx\033[0m]"
 
 /* Return */
 # define _MC_ERROR		1
