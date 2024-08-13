@@ -5,10 +5,13 @@
 This project is about implementing the Address Resolution Protocol spoofing/poisoning method, which is one of the most basic Man In The Middle attacks.<br />
 This attack is possible using a vulnerability present in the way the ARP protocol works and interacts in a network.<br />
 
-## Usage
+## Commands
 
 ```
-[HOST IP] [HOST MAC] [TARGET IP] [TARGET MAC]
+/* Usage */
+
+make
+sudo ./ft_malcolm [HOST IP] [HOST MAC] [TARGET IP] [TARGET MAC] -v
 In that particular order.
 
 HOST = this computer
@@ -18,7 +21,41 @@ MAP addresses have to be in format xx:xx:xx:xx:xx:xx
 (Separator can be either ':' or '-')
 And letters can be both lower and upper case letters
 -v: verbose
+
+Ex.: ./ft_malcolm 10.0.2.15 08:00:27:e1:ad:e1 10.0.2.4 08:00:27:b9:e6:05 -v
+
+/* Useful commands */
+
+// Show an easily readable ARP table with no fixed columns
+arp -a
+// Delete an IP address from the ARP table
+arp -d [IP ADDRESS]
+// Send an ARP request
+sudo arping -c 1 -i [INTERFACE NAME] [TARGET IP ADDRESS]
+Ex.: sudo arping -c 1 -i enp0s3 10.24.104.3
 ```
+## Exemple of use
+
+This section provides step-by-step instructions for setting up a Man-in-the-Middle (MiM) attack simulation using our program. The simulation involves two virtual machines (VMs) running on VirtualBox, where one VM performs ARP spoofing to intercept traffic intended for another machine.
+
+1. Open VirtualBox and create 2 VMs (we used Ubuntu) with sufficient specs (we had a 6400MB base memory and 7 CPUs and 42MB of video memory with a VMSVGA graphic controller with 3D acceleration enabled) and create virtual hard disks (10GB is enough).
+
+2. Configure Network Settings:
+- In VirtualBox, go to File > Tools > Network Manager.
+- On the `NAT Networks` tab, create a new NAT network if one does not already exist.
+- Configure both VMs to use that NAT network by selecting a VM, and then selecting `NAT network` option at Settings > Network > Attached to, with the previous network name.
+
+3. Install the required tools on both VMs:
+- Ex.: `sudo apt install git make net-tools -y` (net-tools to get the ifconfig command) on VM1.
+- Ex.: `sudo apt install net-tools arping -y` on VM2.
+
+4. Start the MiM Attack Program:
+- VM1: Clone, compile, and run the program using VM2's IP and MAC addresses as target IP and MAC adresses. VM1 is now listening for ARP requests comming from VM2.
+- VM2: send an ARP request to the host IP address.
+
+5. Verify ARP Spoofing:
+- Return to VM1 and observe the output of the program. It should indicate that ARP spoofing has been achieved.
+- On VM2, check the ARP table to verify the spoofing with `arp -a`. Look for the entry corresponding to the host IP. It should show the MAC address of VM1 (= the 2nd argument given to the program) instead of the host's MAC address.
 
 ## Technical aspects
 ### ARP spoofing
