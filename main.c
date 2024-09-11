@@ -90,11 +90,7 @@ int	_mc_validate_and_assign_args(char *argv[])
 	printf("\n");
 	for (size_t i=start; i < start + 4; ++i)
 	{
-		if ((_mc_g_data.verbose == false ||
-				(_mc_g_data.verbose == true &&
-					_mc_strncmp(argv[i], "-v",
-					_mc_strlen(argv[i])) != 0)
-			) &&
+		if (
 			((ip_or_mac % 2 == 0 &&
 				_mc_is_ip_address_ipv4(argv[i]) == false) ||
 			(ip_or_mac % 2 != 0 &&
