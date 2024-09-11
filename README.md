@@ -22,7 +22,7 @@ MAP addresses have to be in format xx:xx:xx:xx:xx:xx
 And letters can be both lower and upper case letters
 -v: verbose
 
-Ex.: ./ft_malcolm 10.0.2.15 08:00:27:e1:ad:e1 10.0.2.4 08:00:27:b9:e6:05 -v
+Ex.: sudo ./ft_malcolm 10.0.2.15 08:00:27:e1:ad:e1 10.0.2.4 08:00:27:b9:e6:05 -v
 
 /* Useful commands */
 
