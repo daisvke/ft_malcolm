@@ -145,3 +145,4 @@ To access specific layers:
 - [ARP Spoofing Explanation](https://www.youtube.com/watch?v=YJGGYKAV4pA)  
 - [Man-in-the-Middle Attack](https://www.youtube.com/watch?v=EC1slXCT3bg)  
 - [RFC 826 (ARP Protocol)](https://www.rfc-editor.org/rfc/rfc826)
+- [Address Resolution Protocol (ARP) Parameters](https://www.iana.org/assignments/arp-parameters/arp-parameters.xhtml)
