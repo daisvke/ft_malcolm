@@ -1,6 +1,6 @@
 NAME		=	ft_malcolm
 CC			=	gcc
-CFLAGS		=	-Wall -Wextra -Werror -g
+CFLAGS		=	-Wall -Wextra -g
 
 SRCS_FILES	=	\
 				arg_validation.c \

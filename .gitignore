@@ -4,6 +4,7 @@
 # Tmp files
 .*.sw?
 log
+logs
 
 # Prerequisites
 *.d

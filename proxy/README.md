@@ -1,5 +1,65 @@
 # ft_malcolm
 
+
+
+## Packet forwarding (proxy)
+
+We want to act as a proxy and forward packets without altering the logical flow of the communication, here’s how it works:
+
+1. **Ethernet Layer (Layer 2):**
+   - The source MAC address must be our MAC address when forwarding to the gateway. This ensures the gateway knows where to send its response at the Ethernet layer.
+   - The destination MAC address must be the gateway's MAC address.
+
+2. **IP Layer (Layer 3):**
+   - **IP header's source and destination addresses must not be altered** if we want the target and gateway to believe they are communicating directly.
+   - The target's IP remains the source IP for outgoing packets (to the gateway).
+   - The gateway's IP remains the destination IP for outgoing packets.
+
+3. **Transport Layer (Layer 4):**
+   - TLS and other transport-layer protocols rely on the IP addresses being consistent. Altering the IP addresses would break the communication unless you reestablish the session, which isn't feasible without decrypting/re-encrypting the payload.
+
+### **Steps to forward packets:**
+1. **Modify the Ethernet Layer for forwarding to gateway:**
+   - Set the source MAC address to ours.
+   - Set the destination MAC address to the gateway’s MAC address.
+   - Leave the IP header and higher layers unchanged.
+
+2. **Listen for Gateway Responses:**
+   - Capture packets with our MAC address as the destination (at the Ethernet layer).
+   - Check if the IP header’s destination matches the original target's IP address.
+
+3. **Forward Responses to Target:**
+   - Set the source MAC address to ours.
+   - Set the destination MAC address to the target’s MAC address.
+   - Leave the IP header and higher layers unchanged.
+
+
+## Useful commands
+### Wireshark
+To filter packets sent by a specific MAC address using DNS protocol:
+```
+dns && eth.src == xx:xx:xx:xx:xx:xx
+```
+### tcpdump
+To watch packets involving the target IP address and the gateway MAC address:
+```
+ sudo tcpdump -i wlo1 -nn -e ether host <GATEWAY MAC> -v and host <TARGET IP> | tee logs
+ ```
+
+We can add a small fingerprint to the spoofed packet, like a different TTL value.
+```
+// Change TTL to something unique
+struct iphdr *ip = (struct iphdr *)(_mc_g_data.packet + sizeof(struct ethhdr));
+ip->ttl = 42;
+
+// Then filter packets:
+sudo tcpdump -i wlo1 -nn 'ip[8] = 42'
+// Or, on Wireshark, filter with:
+ip.ttl == 42
+```
+
+
+
 ## Description
 
 This project implements **Address Resolution Protocol (ARP) spoofing/poisoning**, a foundational Man-in-the-Middle (MiM) attack.  

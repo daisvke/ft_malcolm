@@ -71,6 +71,7 @@ void _mc_run_arp_spoofing(void)
     memset(&_mc_g_data.src_addr, 0, sizeof(_mc_g_data.src_addr));
     _mc_g_data.src_addr.sll_family = AF_PACKET;
     _mc_g_data.src_addr.sll_ifindex = if_nametoindex("wlo1"); // Use your network interface
+    // _mc_g_data.src_addr.sll_ifindex = if_nametoindex("wlx00c0ca97cc19"); // Use your network interface
     if (_mc_g_data.src_addr.sll_ifindex == 0)
     {
         perror("if_nametoindex failed");
