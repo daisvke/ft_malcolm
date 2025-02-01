@@ -47,7 +47,6 @@ _mc_t_packet _mc_create_packet_for_spoofing(void)
     uint8_t broadcastmac[6];
     _mc_convert_string_to_byte_ip("192.168.43.1", spoofip);
     _mc_convert_string_to_byte_ip("192.168.43.255", broadcastip);
-    _mc_convert_mac_string_to_bytes("00:00:00:00:00:00", sendermac);
     _mc_convert_mac_string_to_bytes("ff:ff:ff:ff:ff:ff", broadcastmac);
     // _mc_convert_mac_string_to_bytes("9c:b6:d0:6a:c1:b9", sendermac);
 
@@ -57,7 +56,7 @@ _mc_t_packet _mc_create_packet_for_spoofing(void)
     // Modify the ARP packet
     memcpy(packet.arp_packet.__ar_sha, _mc_g_data.host_mac, ETH_ALEN);
     memcpy(packet.arp_packet.__ar_sip, spoofip, _MC_IPV4_BYTE_SIZE);
-    memcpy(&packet.arp_packet.__ar_tha, sendermac, ETH_ALEN);
+    memcpy(&packet.arp_packet.__ar_tha, broadcastmac, ETH_ALEN);
     memcpy(&packet.arp_packet.__ar_tip, broadcastip, _MC_IPV4_BYTE_SIZE);
 
     return packet;

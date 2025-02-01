@@ -58,6 +58,16 @@ sudo tcpdump -i wlo1 -nn 'ip[8] = 42'
 ip.ttl == 42
 ```
 
+### Kernel logs
+```
+dmsg
+```
+
+### Firewall (UFW)
+* Temporarily Disable UFW to let the spoofed packet sent on the network: 
+`sudo ufw disable`
+* Re-enable it afterwards: `sudo ufw enable`
+
 
 
 ## Description
