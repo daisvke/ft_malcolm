@@ -2,7 +2,7 @@
 
 ## Description
 
-This project implements **Address Resolution Protocol (ARP) spoofing/poisoning**, a foundational Man-in-the-Middle (MiM) attack.  
+This project is for educational purposes only. It implements **Address Resolution Protocol (ARP) spoofing/poisoning**, a foundational Man-in-the-Middle (MiM) attack.  
 The attack exploits a vulnerability in the ARP protocol, tricking devices into associating the attacker’s MAC address with a legitimate IP address.  
 
 ---
